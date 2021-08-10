@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: kyuki <kyuki@student.42tokyo.jp>           +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2020/08/18 17:12:33 by kyuki             #+#    #+#              #
-#    Updated: 2021/08/10 20:07:05 by kyuki            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 #--------------ESCAPE CODE------------#
 ifeq ($(shell uname), Linux)
 	ESC_CLEAR_SCREEN		?=	\033[0;2J
@@ -72,7 +60,7 @@ OBJDIR	?= ./objs
 DPSDIR	?= ./dps
 
 #-----------SET SRCS-------------#
-SRCNAME	?=	main.c
+SRCNAME	?=	main
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
@@ -82,7 +70,7 @@ CFLAGS	?= -Wall -Wextra -Werror -g
 SANFLAGS ?=	-g -fsanitize=address
 
 #-------------SET VARIEBLE-----------#
-NAME	?=	philo
+NAME	?=	minishell
 
 CC		?= gcc
 
