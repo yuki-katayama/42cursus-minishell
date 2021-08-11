@@ -55,7 +55,7 @@ endif
 
 #-----------SET DIRECTORY--------#
 SRCDIR	?= ./srcs
-INCDIR	?= -L./includes minishell.h
+INCDIR	?= -L./includes main.h
 OBJDIR	?= ./objs
 DPSDIR	?= ./dps
 
