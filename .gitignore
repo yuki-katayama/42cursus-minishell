@@ -2,5 +2,5 @@ minishell
 /dps
 /objs
 libft/dps
-libft/objs
+libft/obj
 libft/libft.a
