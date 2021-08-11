@@ -79,9 +79,6 @@ RM		:=	rm -rf
 OBJS	?= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
-ifeq ($(shell uname),Linux)
-    PTHREADFLG ?= -lpthread
-endif
 #-------------------------------------#
 
 .PHONY: all
@@ -97,14 +94,14 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 $(NAME):	$(OBJS)
 			@$(MAKE) -s -C libft/.
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)philosopher: All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
 			@$(CC) $(OBJS) $(CFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 .PHONY: san
 san	:	${OBJS} ## Run sanitize using addres
 			@$(MAKE) -s -C libft/.
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)philosopher: All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
 			@$(CC) $(OBJS) $(SANFLAGS1) $(CFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
