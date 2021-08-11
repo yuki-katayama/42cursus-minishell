@@ -55,7 +55,7 @@ endif
 
 #-----------SET DIRECTORY--------#
 SRCDIR	?= ./srcs
-INCDIR	?= -L./includes minishell.h
+INCDIR	?= -L./includes main.h
 OBJDIR	?= ./objs
 DPSDIR	?= ./dps
 
@@ -65,7 +65,9 @@ SRCNAME	?=	main
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -Wall -Wextra -Werror -g
+CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
+
+LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 
 SANFLAGS ?=	-g -fsanitize=address
 
@@ -79,9 +81,6 @@ RM		:=	rm -rf
 OBJS	?= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
-ifeq ($(shell uname),Linux)
-    PTHREADFLG ?= -lpthread
-endif
 #-------------------------------------#
 
 .PHONY: all
@@ -90,21 +89,21 @@ all	:	$(NAME) ## Run philo
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@-mkdir -p $(OBJDIR)
 	@-mkdir -p $(DPSDIR)
-	@$(CC) $(CFLAGS)  -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
 
 -include $(DPS)
 
 $(NAME):	$(OBJS)
 			@$(MAKE) -s -C libft/.
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)philosopher: All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@$(CC) $(OBJS) $(CFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 .PHONY: san
 san	:	${OBJS} ## Run sanitize using addres
 			@$(MAKE) -s -C libft/.
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)philosopher: All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
 			@$(CC) $(OBJS) $(SANFLAGS1) $(CFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
