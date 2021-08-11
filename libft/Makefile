@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: kyuki <kyuki@student.42tokyo.jp>           +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2020/08/18 17:12:33 by kyuki             #+#    #+#              #
-#    Updated: 2021/08/10 20:26:37 by kyuki            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 #--------------ESCAPE CODE------------#
 ifeq ($(shell uname), Linux)
 	ESC_CLEAR_SCREEN		?=	\033[0;2J
@@ -73,7 +61,8 @@ OBJDIR	?= ./obj
 DPSDIR	?= ./dps
 
 #-----------SET SRC INFO----------#
-SRCNAME	?=	ft_malloc.c
+SRCNAME	?=	ft_malloc.c \
+			ft_strlen.c
 
 SRCS	?= $(addprefix $(SRCDIR), $(SRCNAME))
 
