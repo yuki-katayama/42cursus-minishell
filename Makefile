@@ -65,7 +65,9 @@ SRCNAME	?=	main
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -Wall -Wextra -Werror -g
+CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
+
+LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 
 SANFLAGS ?=	-g -fsanitize=address
 
@@ -87,7 +89,7 @@ all	:	$(NAME) ## Run philo
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@-mkdir -p $(OBJDIR)
 	@-mkdir -p $(DPSDIR)
-	@$(CC) $(CFLAGS)  -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
 
 -include $(DPS)
@@ -95,7 +97,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 $(NAME):	$(OBJS)
 			@$(MAKE) -s -C libft/.
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@$(CC) $(OBJS) $(CFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
+			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 .PHONY: san
