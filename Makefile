@@ -58,11 +58,16 @@ SRCDIR	?= ./srcs
 INCDIR	?= -L./includes main.h
 OBJDIR	?= ./objs
 DPSDIR	?= ./dps
+STCSDIR ?= ./stcs
 
 #-----------SET SRCS-------------#
 SRCNAME	?=	main
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
+
+STCSNAME ?= signal
+
+STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
 
 #-------------SET FLAGS--------------#
 CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
@@ -71,34 +76,51 @@ LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 
 SANFLAGS ?=	-g -fsanitize=address
 
-#-------------SET VARIEBLE-----------#
+#-------------SET STCS VARIABLES----------#
+SIGNAL ?= signal
+
+LIBFT ?= libft
+
+#-------------SET OTHER VARIEBLE-----------#
 NAME	?=	minishell
 
 CC		?= gcc
 
 RM		:=	rm -rf
 
+
 OBJS	?= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
-#-------------------------------------#
+#------------------------------------------#
+
+
 
 .PHONY: all
-all	:	$(NAME) ## Run philo
+all	: dir $(LIBFT) $(SIGNAL) $(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@-mkdir -p $(OBJDIR)
-	@-mkdir -p $(DPSDIR)
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
-
 -include $(DPS)
 
+$(SIGNAL):
+	@$(MAKE) -C $(SRCDIR)/signal/.
+
+$(LIBFT):
+	@$(MAKE) -C $(LIBFT)
+
 $(NAME):	$(OBJS)
-			@$(MAKE) -s -C libft/.
+			@$(MAKE) -C libft/.
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
+			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(STCS) $(PTHREADFLG) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
+
+.PHONY: dir
+dir :
+	@-mkdir -p $(OBJDIR)
+	@-mkdir -p $(DPSDIR)
+	@-mkdir -p $(STCSDIR)
 
 .PHONY: san
 san	:	${OBJS} ## Run sanitize using addres
@@ -109,6 +131,7 @@ san	:	${OBJS} ## Run sanitize using addres
 
 .PHONY: clean
 clean	: ## Remove object
+			@echo "$(ESC_CLEAR_SCREEN)"
 			@$(RM) $(OBJDIR)
 			@$(RM) $(DPSDIR)
 			@$(MAKE) clean -s -C ./libft
@@ -117,8 +140,9 @@ clean	: ## Remove object
 .PHONY: fclean
 fclean	:	clean ## Remove object and static
 			@$(MAKE) fclean -s -C ./libft
+			@$(RM) $(STCSDIR)
 			@$(RM) $(NAME)
-			@echo "$(ESC_RED)${NAME}: '"$(NAME)"' has been deleted. $(ESC_DEFAULT)🗑️"
+			@echo "$(ESC_RED)${NAME}: '"$(NAME)"' '"$(STCSDIR)"' has been deleted. $(ESC_DEFAULT)🗑️"
 
 .PHONY: re
 re	:	fclean all ## Retry cmpiles
