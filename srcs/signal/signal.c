@@ -1,4 +1,4 @@
-#include <signal.h>
+#include "../../includes/signal.h"
 
 /*
 ** Ctrl + C

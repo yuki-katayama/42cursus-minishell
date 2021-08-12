@@ -1,4 +1,5 @@
 #include "../includes/main.h"
+#include "../includes/signal.h"
 
 int	main(void)
 {
