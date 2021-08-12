@@ -11,6 +11,7 @@ int	main(void)
 		{
 			add_history(command);
 		}
+		ft_signal();
 		free(command);
 	}
 	return (0);
