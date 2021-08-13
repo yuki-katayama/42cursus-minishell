@@ -7,12 +7,12 @@ int	main(void)
 
 	while (1)
 	{
+		ft_signal();
 		command = readline("minishell$ ");
 		if (command && ft_strlen(command) > 0)
 		{
 			add_history(command);
 		}
-		ft_signal();
 		free(command);
 	}
 	return (0);
