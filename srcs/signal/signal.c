@@ -23,10 +23,12 @@ void	ft_signal(void)
 {
 	if (signal(SIGINT, ft_signal_sigint) == SIG_ERR)
 	{
+		printf("%s", strerror(errno));
 		exit(1);
 	}
 	if (signal(SIGQUIT, ft_signal_sigquit) == SIG_ERR)
 	{
+		printf("%s", strerror(errno));
 		exit(1);
 	}
 }
