@@ -77,7 +77,7 @@ LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 SANFLAGS ?=	-g -fsanitize=address
 
 #-------------SET STCS VARIABLES----------#
-SIGNAL ?= signal
+SIGNAL ?= stcs/signal.a
 
 LIBFT ?= libft
 
@@ -97,21 +97,22 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
 
 .PHONY: all
-all	: dir $(LIBFT) $(SIGNAL) $(NAME) ## Run minishell
+all	: $(LIBFT) $(SIGNAL) $(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
 -include $(DPS)
 
+.PHONY: $(LIBFT)
+$(LIBFT): |  dir
+	@$(MAKE) -C ./libft/.
+
+.PHONY: $(SIGNAL)
 $(SIGNAL):
 	@$(MAKE) -C $(SRCDIR)/signal/.
 
-$(LIBFT):
-	@$(MAKE) -C $(LIBFT)
-
 $(NAME):	$(OBJS)
-			@$(MAKE) -C libft/.
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
 			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(STCS) $(PTHREADFLG) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"

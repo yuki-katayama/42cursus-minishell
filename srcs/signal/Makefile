@@ -92,6 +92,7 @@ $(STCSDIR)/$(NAME):	$(OBJS)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
 			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
+			@rm -rf ../../minishell
 
 fclean:
 	rm -rf $(STCSDIR)/$(NAME)
