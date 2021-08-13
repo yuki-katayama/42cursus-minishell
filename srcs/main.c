@@ -9,6 +9,8 @@ int	main(void)
 	{
 		ft_signal();
 		command = readline("minishell$ ");
+		if (command == NULL)
+			 exit(1);
 		if (command && ft_strlen(command) > 0)
 		{
 			add_history(command);
