@@ -95,6 +95,7 @@ $(OBJDIR)/%.o: $(SRCDIR)%.c
 $(NAME):	$(OBJS)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)libft: All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
 			@ar	rcs	$(NAME)	$(OBJS)
+			@rm -rf ../minishell
 			@echo "$(ESC_GREEN)libft: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 clean	: ## Remove object
