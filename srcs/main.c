@@ -1,5 +1,6 @@
 #include "../includes/main.h"
 #include "../includes/signal.h"
+#include "unistd.h"
 
 int	main(void)
 {
@@ -10,7 +11,10 @@ int	main(void)
 		ft_signal();
 		command = readline("minishell$ ");
 		if (command == NULL)
-			 exit(1);
+		{
+			printf("\033[%dAminishell$ exit\n" ,1);
+			exit(0);
+		}
 		if (command && ft_strlen(command) > 0)
 		{
 			add_history(command);

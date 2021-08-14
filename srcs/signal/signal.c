@@ -6,17 +6,24 @@
 
 static void	ft_signal_sigint(int sig)
 {
-	printf("%d\n", sig);
-	exit(1);
+	(void)sig;
+	printf("\n");
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+	errno = 1;
 }
 
 /*
 ** Ctrl + \
+** 何もしない
 */
 
 static void	ft_signal_sigquit(int sig)
 {
-	printf("%d\n", sig);
+	(void)sig;
+	rl_on_new_line();
+	rl_redisplay();
 }
 
 void	ft_signal(void)

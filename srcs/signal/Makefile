@@ -65,7 +65,7 @@ SRCNAME	?=	signal
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -Wall -Wextra -Werror -g
+CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
 NAME	?=	signal.a
@@ -96,8 +96,8 @@ $(STCSDIR)/$(NAME):	$(OBJS)
 
 fclean:
 	rm -rf $(STCSDIR)/$(NAME)
-	rm -rf $(OBJDIR)/signal.o
-	rm -rf $(DPSDIR)/signal.d
+	rm -rf $(OBJDIR)/${SRCNAME}.o
+	rm -rf $(DPSDIR)/${SRCNAME}.d
 
 .PHONY: help
 help	: ## Display this help
