@@ -65,7 +65,8 @@ SRCNAME	?=	main
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
-STCSNAME ?= signal
+STCSNAME ?=	signal \
+			utils
 
 STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
 
@@ -77,9 +78,11 @@ LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 SANFLAGS ?=	-g -fsanitize=address
 
 #-------------SET STCS VARIABLES----------#
-SIGNAL ?= stcs/signal.a
+SIGNAL	?= signal
 
-LIBFT ?= libft
+UTILS	?= utils
+
+LIBFT	?= libft
 
 #-------------SET OTHER VARIEBLE-----------#
 NAME	?=	minishell
@@ -97,7 +100,7 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
 
 .PHONY: all
-all	: $(LIBFT) $(SIGNAL) $(NAME) ## Run minishell
+all	: $(LIBFT) $(SIGNAL) $(UTILS) $(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
@@ -110,11 +113,15 @@ $(LIBFT): |  dir
 
 .PHONY: $(SIGNAL)
 $(SIGNAL):
-	@$(MAKE) -C $(SRCDIR)/signal/.
+	@$(MAKE) -C $(SRCDIR)/$(SIGNAL)/.
+
+.PHONY: $(UTILS)
+$(UTILS):
+	@$(MAKE) -C $(SRCDIR)/$(UTILS)/.
 
 $(NAME):	$(OBJS)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(STCS) $(PTHREADFLG) -o $(NAME)
+			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(STCS) -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 .PHONY: dir
@@ -127,7 +134,7 @@ dir :
 san	:	${OBJS} ## Run sanitize using addres
 			@$(MAKE) -s -C libft/.
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@$(CC) $(OBJS) $(SANFLAGS1) $(CFLAGS) libft/libft.a $(PTHREADFLG) -o $(NAME)
+			@$(CC) $(OBJS) $(SANFLAGS1) $(CFLAGS) $(LDFLAGS) libft/libft.a -o $(NAME)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 .PHONY: clean

@@ -53,27 +53,24 @@ else
 	ESC_BACK_GRAY		?=	\x1b[47m
 endif
 
-#-----------SET DIR---------------#
+#-----------SET DIRECTORY--------#
+SRCDIR	?= ./
+OBJDIR	?= ../../objs
+DPSDIR	?= ../../dps
+STCSDIR	?= ../../stcs
 
-SRCDIR	?=
-INCDIR	?=	-L./libft -lft
-OBJDIR	?= ./obj
-DPSDIR	?= ./dps
+#-----------SET SRCS-------------#
+SRCNAME	?=	msh_strcmp
 
-#-----------SET SRC INFO----------#
-SRCNAME	?=	ft_malloc.c \
-			ft_strlen.c \
-			ft_charskip.c
+SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
-SRCS	?= $(addprefix $(SRCDIR), $(SRCNAME))
+#-------------SET FLAGS--------------#
+CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
-
-NAME	?=	libft.a
+NAME	?=	utils.a
 
 CC		?= gcc
-
-CFLAGS	?= -Wall -Wextra -Werror -g
 
 RM		:=	rm -rf
 
@@ -82,35 +79,26 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
 #-------------------------------------#
 
+.PHONY: all
+all	:	$(STCSDIR)/$(NAME) ## make utils.a
 
-all:		$(NAME)
-
-$(OBJDIR)/%.o: $(SRCDIR)%.c
-	@-mkdir -p $(OBJDIR)
-	@-mkdir -p $(DPSDIR)
-	@$(CC) $(CFLAGS)  -MMD -MP -MF $(DPSDIR)/$(<:.c=.d) -c $< -o $@
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
 
 -include $(DPS)
 
-$(NAME):	$(OBJS)
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)libft: All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@ar	rcs	$(NAME)	$(OBJS)
-			@rm -rf ../minishell
-			@echo "$(ESC_GREEN)libft: '$(NAME)' was created. $(ESC_DEFAULT)✅"
+$(STCSDIR)/$(NAME):	$(OBJS)
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
+			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
+			@rm -rf ../../minishell
 
-clean	: ## Remove object
-			@$(RM) $(OBJDIR)
-			@$(RM) $(DPSDIR)
-			@echo "$(ESC_RED)libft: '"$(OBJDIR)"' '"$(DPSDIR)"' has been deleted. $(ESC_DEFAULT)🗑️"
+fclean:
+	rm -rf $(STCSDIR)/$(NAME)
+	rm -rf $(OBJDIR)/${SRCNAME}.o
+	rm -rf $(DPSDIR)/${SRCNAME}.d
 
-fclean	:	clean ## Remove object and static
-			@$(RM) $(NAME)
-			@echo "$(ESC_RED)libft: '"$(NAME)"' has been deleted. $(ESC_DEFAULT)🗑️"
-
-re	:			fclean all ## Retry cmpiles
-
+.PHONY: help
 help	: ## Display this help
 	@grep -E '^[a-zA-Z1-9_-]+	:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-
-.PHONY:	all clean fclean re help
