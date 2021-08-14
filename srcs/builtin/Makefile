@@ -54,113 +54,50 @@ else
 endif
 
 #-----------SET DIRECTORY--------#
-SRCDIR	?= ./srcs
-INCDIR	?= -L./includes main.h
-OBJDIR	?= ./objs
-DPSDIR	?= ./dps
-STCSDIR ?= ./stcs
+SRCDIR	?= ./
+OBJDIR	?= ../../objs
+DPSDIR	?= ../../dps
+STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?=	main
+SRCNAME	?=	exit
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
-
-STCSNAME ?=	signal \
-			utils \
-			builtin
-
-STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
 
 #-------------SET FLAGS--------------#
 CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
 
-LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
-
-SANFLAGS ?=	-g -fsanitize=address
-
-#-------------SET STCS VARIABLES----------#
-SIGNAL	?= signal
-
-UTILS	?= utils
-
-LIBFT	?= libft
-
-BUILTIN ?= builtin
-
-#-------------SET OTHER VARIEBLE-----------#
-NAME	?=	minishell
+#-------------SET VARIEBLE-----------#
+NAME	?=	builtin.a
 
 CC		?= gcc
 
 RM		:=	rm -rf
 
-
 OBJS	?= $(addprefix $(OBJDIR)/, $(notdir $(SRCS:.c=.o)))
 DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
-#------------------------------------------#
-
-
+#-------------------------------------#
 
 .PHONY: all
-all	: $(LIBFT) $(SIGNAL) $(UTILS) $(BUILTIN) $(NAME) ## Run minishell
+all	:	$(STCSDIR)/$(NAME) ## make builtin.a
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
+
 -include $(DPS)
 
-.PHONY: $(LIBFT)
-$(LIBFT): |  dir
-	@$(MAKE) -C ./libft/.
-
-.PHONY: $(SIGNAL)
-$(SIGNAL):
-	@$(MAKE) -C $(SRCDIR)/$(SIGNAL)/.
-
-.PHONY: $(BUILTIN)
-$(BUILTIN):
-	@$(MAKE) -C $(SRCDIR)/$(BUILTIN)/.
-
-.PHONY: $(UTILS)
-$(UTILS):
-	@$(MAKE) -C $(SRCDIR)/$(UTILS)/.
-
-$(NAME):	$(OBJS)
+$(STCSDIR)/$(NAME):	$(OBJS)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(STCS) -o $(NAME)
+			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
 			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
+			@rm -rf ../../minishell
 
-.PHONY: dir
-dir :
-	@-mkdir -p $(OBJDIR)
-	@-mkdir -p $(DPSDIR)
-	@-mkdir -p $(STCSDIR)
-
-.PHONY: san
-san	:	${OBJS} ## Run sanitize using addres
-			@$(MAKE) -s -C libft/.
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
-			@$(CC) $(OBJS) $(SANFLAGS1) $(CFLAGS) $(LDFLAGS) libft/libft.a -o $(NAME)
-			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
-
-.PHONY: clean
-clean	: ## Remove object
-			@echo "$(ESC_CLEAR_SCREEN)"
-			@$(RM) $(OBJDIR)
-			@$(RM) $(DPSDIR)
-			@$(MAKE) clean -s -C ./libft
-			@echo "$(ESC_RED)${NAME}: '"$(OBJDIR)"' '"$(DPSDIR)"' has been deleted.$(ESC_DEFAULT)🗑️"
-
-.PHONY: fclean
-fclean	:	clean ## Remove object and static
-			@$(MAKE) fclean -s -C ./libft
-			@$(RM) $(STCSDIR)
-			@$(RM) $(NAME)
-			@echo "$(ESC_RED)${NAME}: '"$(NAME)"' '"$(STCSDIR)"' has been deleted. $(ESC_DEFAULT)🗑️"
-
-.PHONY: re
-re	:	fclean all ## Retry cmpiles
+fclean:
+	rm -rf $(STCSDIR)/$(NAME)
+	rm -rf $(OBJDIR)/${SRCNAME}.o
+	rm -rf $(DPSDIR)/${SRCNAME}.d
 
 .PHONY: help
 help	: ## Display this help

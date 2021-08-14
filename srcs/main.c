@@ -1,6 +1,7 @@
 #include "../includes/main.h"
 #include "../includes/signal.h"
 #include "../includes/utils.h"
+#include "../includes/builtin.h"
 
 int	main(void)
 {
@@ -10,19 +11,16 @@ int	main(void)
 	{
 		ft_signal();
 		command = readline("minishell$ ");
-		if (command == NULL)
-		{
-			printf("\033[%dAminishell$ exit\n" ,1);
-			exit(0);
-		}
 		if (command && ft_strlen(command) > 0)
 		{
 			add_history(command);
 		}
-		if (msh_strcmp(command, "exit") == 0)
+		if (command == NULL)
 		{
-			exit(0);
+			ft_exit("minishell$ exit", ft_ctrl_d);
 		}
+		if (msh_strcmp(command, "exit") == 0)
+			ft_exit(command, ft_input_exit);
 		free(command);
 	}
 	return (0);
