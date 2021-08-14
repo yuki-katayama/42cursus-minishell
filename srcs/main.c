@@ -1,6 +1,6 @@
 #include "../includes/main.h"
 #include "../includes/signal.h"
-#include "unistd.h"
+#include "../includes/utils.h"
 
 int	main(void)
 {
@@ -18,6 +18,10 @@ int	main(void)
 		if (command && ft_strlen(command) > 0)
 		{
 			add_history(command);
+		}
+		if (msh_strcmp(command, "exit") == 0)
+		{
+			exit(0);
 		}
 		free(command);
 	}
