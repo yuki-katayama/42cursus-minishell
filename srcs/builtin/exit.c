@@ -6,6 +6,10 @@ int	ft_ctrl_d(char *str)
 	return (0);
 }
 
+/*
+** exit + commandで、statusが変わるので後で処理を追加する。
+*/
+
 int	ft_input_exit(char *command)
 {
 	(void)command;
