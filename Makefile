@@ -67,7 +67,8 @@ SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 STCSNAME ?=	signal \
 			builtin \
-			error
+			error \
+			utils
 
 STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
 
@@ -105,7 +106,8 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
 
 .PHONY: all
-all	: $(STCS_LIBFT) $(STCS_SIGNAL) $(STCS_ERROR) $(STCS_BUILTIN) $(NAME) ## Run minishell
+all	: $(STCS_LIBFT) $(STCS_SIGNAL) $(STCS_ERROR) $(STCS_BUILTIN) \
+		$(STCS_UTILS) $(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
