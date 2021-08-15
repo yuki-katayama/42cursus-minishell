@@ -28,12 +28,9 @@ struct s_token
 
 struct s_node
 {
-	char	*cmd;
-	t_token	*token;
-	t_token	*redirect_input;
-	t_token	*redirect_output;
-	t_token	*redirect_append;
-	t_token	*redirect_history;
+	t_token	*cmd;
+	t_token	*input;
+	t_token	*output;
 	t_node	*next;
 };
 

@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "../../includes/utils.h"
 
 char	*skip(char *str)
 {
