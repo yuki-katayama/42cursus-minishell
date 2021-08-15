@@ -15,9 +15,9 @@ int	main(void)
 			add_history(command);
 		if (command == NULL)
 			ft_exit("minishell$ exit", ft_ctrl_d);
-		if ((ft_strncmp(ft_charskip(command, ' '), \
+		if ((ft_strncmp(ft_spaceskip(command), \
 						"exit ", ft_strlen("exit ")) == 0) \
-		|| ft_strcmp(ft_charskip(command, ' '), "exit") == 0)
+		|| ft_strcmp(ft_spaceskip(command), "exit") == 0)
 			ft_exit(command, ft_input_exit);
 		free(command);
 	}
