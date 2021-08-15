@@ -3,7 +3,8 @@
 
 int	ft_ctrl_d(char *str)
 {
-	printf("\033[%dA%s\n", 1, str);
+	ft_putstr_fd("\033[1A", STDERR_FILENO);
+	ft_putendl_fd(str, STDOUT_FILENO);
 	return (0);
 }
 
@@ -14,7 +15,7 @@ int	ft_ctrl_d(char *str)
 int	ft_input_exit(char *command)
 {
 	(void)command;
-	printf("exit\n");
+	ft_putendl_fd("exit", STDOUT_FILENO);
 	return (0);
 }
 

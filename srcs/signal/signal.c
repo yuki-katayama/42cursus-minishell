@@ -1,4 +1,5 @@
 #include "../../includes/signal.h"
+#include "../../libft/libft.h"
 
 /*
 ** Ctrl + C
@@ -7,7 +8,7 @@
 static void	ft_signal_sigint(int sig)
 {
 	(void)sig;
-	printf("\n");
+	ft_putchar_fd('\n', STDOUT_FILENO);
 	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
@@ -30,12 +31,12 @@ void	ft_signal(void)
 {
 	if (signal(SIGINT, ft_signal_sigint) == SIG_ERR)
 	{
-		printf("%s", strerror(errno));
+		ft_putstr_fd(strerror(errno), STDERR_FILENO);
 		exit(1);
 	}
 	if (signal(SIGQUIT, ft_signal_sigquit) == SIG_ERR)
 	{
-		printf("%s", strerror(errno));
+		ft_putstr_fd(strerror(errno), STDERR_FILENO);
 		exit(1);
 	}
 }
