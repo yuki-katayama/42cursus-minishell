@@ -1,4 +1,5 @@
 #include "../../includes/builtin.h"
+#include "../../includes/error.h"
 #include "../../libft/libft.h"
 
 static unsigned long int	exit_atoi(const char *str, bool *err_flg)
@@ -39,11 +40,24 @@ int	ft_ctrl_d(char *str)
 ** exit + commandで、statusが変わるので後で処理を追加する。
 */
 
-int	ft_input_exit(char *command)
+int    ft_input_exit(char *str)
 {
-	(void)command;
-	ft_putendl_fd("exit", STDERR_FILENO);
-	return (0);
+	bool err_flg;
+	uint8_t num;
+
+    err_flg = false;
+    num = 0;
+    str = ft_skip(str, ft_strlen("exit "));
+    str = ft_spaceskip(str);
+    if (!(ft_isdigitstr(str)))
+    {
+        numeric_argument_error(str);
+        return (255);
+    }
+    num = (uint8_t)exit_atoi(str, &err_flg);
+    if (err_flg)
+        numeric_argument_error(str);
+    return (num);
 }
 
 void	ft_exit(char *str, int (*ft_exit)(char *))
