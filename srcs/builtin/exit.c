@@ -4,7 +4,7 @@
 int	ft_ctrl_d(char *str)
 {
 	ft_putstr_fd("\033[1A", STDERR_FILENO);
-	ft_putendl_fd(str, STDOUT_FILENO);
+	ft_putendl_fd(str, STDERR_FILENO);
 	return (0);
 }
 
@@ -15,7 +15,7 @@ int	ft_ctrl_d(char *str)
 int	ft_input_exit(char *command)
 {
 	(void)command;
-	ft_putendl_fd("exit", STDOUT_FILENO);
+	ft_putendl_fd("exit", STDERR_FILENO);
 	return (0);
 }
 
