@@ -5,6 +5,7 @@
 # include <stdio.h> //readline
 # include <readline/readline.h> //rl_replace_line, rl_on_new_line, rl_redisplay
 # include <unistd.h> // FILENO
+# include <limits.h> // LLONG_
 
 int		ft_ctrl_d(char *str);
 int		ft_input_exit(char *command);
