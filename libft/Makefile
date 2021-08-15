@@ -65,7 +65,10 @@ SRCNAME	?=	ft_malloc.c \
 			ft_strlen.c \
 			ft_charskip.c \
 			ft_strncmp.c \
-			ft_strcmp.c
+			ft_strcmp.c \
+			ft_putchar_fd.c \
+			ft_putendl_fd.c \
+			ft_putstr_fd.c
 
 SRCS	?= $(addprefix $(SRCDIR), $(SRCNAME))
 
