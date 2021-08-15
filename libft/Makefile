@@ -63,7 +63,9 @@ DPSDIR	?= ./dps
 #-----------SET SRC INFO----------#
 SRCNAME	?=	ft_malloc.c \
 			ft_strlen.c \
-			ft_charskip.c
+			ft_charskip.c \
+			ft_strncmp.c \
+			ft_strcmp.c
 
 SRCS	?= $(addprefix $(SRCDIR), $(SRCNAME))
 

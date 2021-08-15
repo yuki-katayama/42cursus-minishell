@@ -1,4 +1,5 @@
 #include "../../includes/builtin.h"
+#include "../../libft/libft.h"
 
 int	ft_ctrl_d(char *str)
 {
@@ -13,6 +14,7 @@ int	ft_ctrl_d(char *str)
 int	ft_input_exit(char *command)
 {
 	(void)command;
+	printf("exit\n");
 	return (0);
 }
 
