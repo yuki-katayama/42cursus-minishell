@@ -2,7 +2,6 @@
 #include "../includes/utils.h"
 #include "../includes/pipe.h"
 
-
 void	lst_add_back(t_token **token, t_token *new)
 {
 	while (*token)
@@ -10,7 +9,7 @@ void	lst_add_back(t_token **token, t_token *new)
 	*token = new;
 }
 
-t_token	*tokenize_helper(char **str, char c, t_token_kind kind)
+t_token	*tokenize_helper(char **str, t_kind kind)
 {
 	t_token	*ret;
 	char	*start;
@@ -20,15 +19,14 @@ t_token	*tokenize_helper(char **str, char c, t_token_kind kind)
 		exit(1);
 	ret->kind = kind;
 	ret->next = NULL;
-	if (kind == TK_DRI || kind == TK_DRO)
-		*str += 2;
-	if (kind == TK_SQ || kind == TK_DQ || kind == TK_RI || kind == TK_RO)
-		++*str;
 	*str = skip(*str);
-	start = *str;
-	while (**str && **str != c)
-		++*str;
-		ret->str = msh_substr(start, *str);
+	if (**str == '\'')
+		*str = skip_until_c(start = ++*str, '\''), ret->status = ST_SQ;
+	else if (**str == '"')
+		*str = skip_until_c(start = ++*str, '"'), ret->status = ST_DQ;
+	else
+		*str = skip_until_c(start = *str, ' '), ret->status = ST_SP;
+	ret->str = msh_substr(start, *str);
 	if (**str)
 		++*str;
 	return (ret);
@@ -39,23 +37,20 @@ t_node	tokenize(char *str)
 	t_node	node;
 
 	node = (t_node){};
+	str = skip(str);
 	while (*str)
 	{
-		str = skip(str);
-		if (*str == '\'')
-			lst_add_back(&node.cmd, tokenize_helper(&str, '\'', TK_SQ));
-		else if (*str == '"')
-			lst_add_back(&node.cmd, tokenize_helper(&str, '"', TK_DQ));
-		else if (*str == '<' && *(str + 1) != '<')
-			lst_add_back(&node.input, tokenize_helper(&str, ' ', TK_RI));
+		if (*str == '<' && *(str + 1) != '<')
+			++str, lst_add_back(&node.input, tokenize_helper(&str, TK_RI));
 		else if (*str == '<' && *(str + 1) == '<')
-			lst_add_back(&node.input, tokenize_helper(&str, ' ', TK_DRI));
+			str += 2, lst_add_back(&node.input, tokenize_helper(&str, TK_DRI));
 		else if (*str == '>' && *(str + 1) != '>')
-			lst_add_back(&node.output, tokenize_helper(&str, ' ', TK_RO));
+			++str, lst_add_back(&node.output, tokenize_helper(&str, TK_RO));
 		else if (*str == '>' && *(str + 1) == '>')
-			lst_add_back(&node.output, tokenize_helper(&str, ' ', TK_DRO));
+			str += 2, lst_add_back(&node.output, tokenize_helper(&str, TK_DRO));
 		else
-			lst_add_back(&node.cmd, tokenize_helper(&str, ' ', TK_CMD));
+			lst_add_back(&node.cmd, tokenize_helper(&str, TK_CMD));
+		str = skip(str);
 	}
 	return (node);
 }
@@ -78,7 +73,7 @@ t_node	*nodalize(char *str)
 		{
 			if (*str == '\'')
 				str = skip_until_c(str, '\'');
-			if (*str == '"')
+			else if (*str == '"')
 				str = skip_until_c(str, '"');
 			++str;
 		}
@@ -90,10 +85,11 @@ t_node	*nodalize(char *str)
 }
 
 #include <string.h>
+#include <stdio.h>
 
 int main(int argc, char const *argv[], char **envp)
 {
-	t_node *node = nodalize(strdup("cat tokenize.c | cat | cat  outfile"));
+	t_node *node = nodalize(strdup("echo HELLO$PATH | cat | cat > outfile"));
 	t_env *env = init_env(envp);
 	multi_level_pipe(node, env);
 	return 0;

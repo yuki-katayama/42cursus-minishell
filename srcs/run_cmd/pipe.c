@@ -2,7 +2,6 @@
 #include "../../includes/utils.h"
 #include "../../includes/lexer.h"
 
-
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	while (*s1 && *s2)
@@ -19,7 +18,7 @@ char	*msh_get_env(char *key, t_env *env)
 			return (env->value);
 		env = env->next;
 	}
-	return (NULL);
+	return ("");
 }
 
 static char	*sub_split(const char *start, const char *end)
@@ -82,6 +81,19 @@ size_t	ft_strlen(const char *str)
 	return (len);
 }
 
+char	*ft_strdup(const char *str)
+{
+	char	*ret;
+	size_t	idx;
+
+	ret = malloc(sizeof(*ret) * (ft_strlen(str) + 1));
+	idx = 0;
+	while (*str)
+		ret[idx++] = *str++;
+	ret[idx] = '\0';
+	return (ret);
+}
+
 char	*ft_strjoin(const char *s1, const char *s2)
 {
 	char	*ret;
@@ -99,7 +111,100 @@ char	*ft_strjoin(const char *s1, const char *s2)
 	return (ret);
 }
 
+char	*ft_strchr(const char *str, int c)
+{
+	while (*str)
+	{
+		if (*str == (char)c)
+			return ((char *)str);
+		++str;
+	}
+	if (!c)
+		return ((char *)str);
+	return (NULL);
+}
 
+char	*expand_environment_variables_helper(char *str, size_t idx, t_env *env)
+{
+	char	*ret;
+	char	*start;
+	size_t	len;
+	int		flag;
+
+	if (!*str)
+	{
+		ret = malloc(sizeof(*ret) * (idx + 1));
+		if (ret)
+			ret[idx] = '\0';
+		return (ret);
+	}
+	if (*str == '$')
+	{
+		flag = 0;
+		start = ++str;
+		while (*str && *str != '$')
+			++str;
+		if (*str == '$')
+			*str = '\0', ++flag;
+		start = msh_get_env(start, env);
+		len = ft_strlen(start);
+		if (flag)
+			*str = '$';
+	}
+	else
+	{
+		start = str;
+		while (*str && *str != '$')
+			++str;
+		len = str - start;
+	}
+	ret = expand_environment_variables_helper(str, idx + len, env);
+	while (len--)
+		ret[idx + len] = start[len];
+	return (ret);
+}
+t_token	*expand_environment_variables_split(t_token *token, t_env *env)
+{
+	char	*str;
+	char	*start;
+	t_token	*next;
+	t_token	*ret;
+	t_token	**cur;
+
+	next = token->next;
+	ret = NULL;
+	cur = &ret;
+	str = expand_environment_variables_helper(token->str, 0, env);
+	while (*str)
+	{
+		str = skip(str);
+		start = str;
+		*cur = malloc(sizeof(**cur));
+		str = skip_until_c(str, ' ');
+		**cur = (t_token)
+		{
+			.str = msh_substr(start, str),
+			.kind = token->kind
+		};
+		cur = &(*cur)->next;
+	}
+	*cur = next;
+	free(token->str);
+	free(token);
+	return (ret);
+}
+
+void	expand_environment_variables(t_token **token, t_env *env)
+{
+	while (*token)
+	{
+		if ((*token)->status == ST_SP && ft_strchr((*token)->str, '$'))
+			*token = expand_environment_variables_split(*token, env);
+		if ((*token)->status == ST_SQ && ft_strchr((*token)->str, '$'))
+			(*token)->str = expand_environment_variables_helper((*token)->str, 0, env);
+		token = &(*token)->next;
+	}
+}
 
 char	*format_path(char *cmd, char **path)
 {
@@ -160,21 +265,23 @@ int	open_output(t_token *token)
 	while (token)
 	{
 		if (token->kind == TK_RO)
-			ret = open(token->str, O_WRONLY | O_CREAT | O_APPEND, S_IREAD | S_IWRITE);
-		if (token->kind == TK_DRO)
 			ret = open(token->str, O_WRONLY | O_CREAT | O_TRUNC, S_IREAD | S_IWRITE);
+		if (token->kind == TK_DRO)
+			ret = open(token->str, O_WRONLY | O_CREAT | O_APPEND, S_IREAD | S_IWRITE);
 		token = token->next;
 	}
 	return (ret);
 }
 
-void	child_process(int *pipe_fd, t_node *node, char **path)
+void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env)
 {
 	int	output_fd;
 	int	input_fd;
 
 	close(pipe_fd[READ]);
-	//expand_environment_variables(node);
+	expand_environment_variables(&node->cmd, env);
+	expand_environment_variables(&node->input, env);
+	expand_environment_variables(&node->output, env);
 	if (node->input)
 		dup2(input_fd = open_input(node->input), READ), close(input_fd);
 	if (node->output)
@@ -205,7 +312,7 @@ void	multi_level_pipe(t_node *node, t_env *env)
 		pipe(pipe_fd);
 		pid = fork();
 		if (!pid)
-			child_process(pipe_fd, node, path);
+			child_process(pipe_fd, node, path, env);
 		else
 			adult_process(pipe_fd, node);
 		node = node->next;
@@ -230,8 +337,8 @@ t_env	*init_env(char **envp)
 		*str = '\0';
 		**cur = (t_env)
 		{
-			.key = *envp,
-			.value = ++str
+			.key = ft_strdup(*envp),
+			.value = ft_strdup(++str)
 		};
 		++envp;
 		cur = &(*cur)->next;
