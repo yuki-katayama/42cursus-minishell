@@ -3,6 +3,7 @@
 
 # include <unistd.h> //FILENO
 
-void	numeric_argument_error(char *str);
+void	exit_numeric_argument_error(char *str);
+void	exit_too_many_argument_error(char *str);
 
 #endif

@@ -51,12 +51,12 @@ int    ft_input_exit(char *str)
     str = ft_spaceskip(str);
     if (!(ft_isdigitstr(str)))
     {
-        numeric_argument_error(str);
+        exit_numeric_argument_error(str);
         return (255);
     }
     num = (uint8_t)exit_atoi(str, &err_flg);
     if (err_flg)
-        numeric_argument_error(str);
+        exit_numeric_argument_error(str);
     return (num);
 }
 
