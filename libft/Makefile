@@ -61,7 +61,8 @@ OBJDIR	?= ./obj
 DPSDIR	?= ./dps
 
 #-----------SET SRC INFO----------#
-SRCNAME	?=	ft_malloc.c \
+SRCNAME	?=	ft_malloc_p.c \
+			ft_malloc_pp.c \
 			ft_strlen.c \
 			ft_spaceskip.c \
 			ft_strncmp.c \
@@ -71,7 +72,10 @@ SRCNAME	?=	ft_malloc.c \
 			ft_putstr_fd.c \
 			ft_skip.c \
 			ft_isdigit.c \
-			ft_isdigitstr.c
+			ft_isdigitstr.c \
+			ft_charskip.c \
+			ft_free_char.c \
+			ft_arraylen.c
 
 SRCS	?= $(addprefix $(SRCDIR), $(SRCNAME))
 
