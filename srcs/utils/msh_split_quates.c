@@ -1,5 +1,14 @@
 #include "../../libft/libft.h"
 
+/*
+input: aa "a b c" 'a b c de' cd
+output:[
+	aa,
+	"a b c",
+	'a b c de',
+	cd,
+];
+*/
 static int	check_if_sep(char c, char sep, bool *quatation)
 {
 	if ((c == '"' || c == '\'') && *quatation == false)
