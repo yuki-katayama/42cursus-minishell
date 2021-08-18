@@ -3,23 +3,27 @@
 #include "../includes/utils.h"
 #include "../includes/builtin.h"
 
-int	main(void)
+int	main(int argc, char **test)
 {
 	char	*argv;
 
+	(void)argc;
 	while (1)
 	{
 		ft_signal();
-		argv = readline("minishell$ ");
+		if (TEST)
+			argv = test[2];
+		else
+			argv = readline("minishell$ ");
 		if (argv && ft_strlen(argv) > 0)
 			add_history(argv);
 		if (argv == NULL)
-			ft_exit("minishell$ exit", ft_ctrl_d);
+			ft_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
 		if ((ft_strncmp(argv, \
 						"exit ", ft_strlen("exit ")) == 0) \
-		|| ft_strcmp(argv + ft_strlen("exit"), "exit") == 0)
-			ft_exit(argv, ft_input_exit);
+		|| ft_strcmp(argv, "exit") == 0)
+			ft_exit(argv);
 		free(argv);
 	}
 	return (0);
