@@ -14,12 +14,13 @@ int		ft_strcmp(const char *s1, const char *s2);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putchar_fd(char c, int fd);
-char	*ft_skip(const char *str, int len);
 int		ft_isdigit(int c);
 bool	ft_isdigitstr(char *str);
 char	*ft_charskip(const char *str, char skip);
 void	*ft_free_char(char **word, int index);
 int		ft_arraylen(char **array);
+char	*ft_chardel(char *str, char c);
+
 
 
 #endif

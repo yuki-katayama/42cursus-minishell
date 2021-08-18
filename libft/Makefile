@@ -70,12 +70,12 @@ SRCNAME	?=	ft_malloc_p.c \
 			ft_putchar_fd.c \
 			ft_putendl_fd.c \
 			ft_putstr_fd.c \
-			ft_skip.c \
 			ft_isdigit.c \
 			ft_isdigitstr.c \
 			ft_charskip.c \
 			ft_free_char.c \
-			ft_arraylen.c
+			ft_arraylen.c \
+			ft_chardel.c
 
 SRCS	?= $(addprefix $(SRCDIR), $(SRCNAME))
 
