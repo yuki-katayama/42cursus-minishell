@@ -21,6 +21,4 @@ void	*ft_free_char(char **word, int index);
 int		ft_arraylen(char **array);
 char	*ft_chardel(char *str, char c);
 
-
-
 #endif

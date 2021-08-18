@@ -7,9 +7,15 @@
 # include <unistd.h> // FILENO
 # include <limits.h> // LLONG_
 # include <errno.h> //errno
+# include <stdbool.h> //bool
 
-void	ft_ctrl_d(char *str);
-int		ft_input_exit(char *command);
-void	ft_exit(char *str);
+// exit
+void				ft_ctrl_d(char *str);
+void				ft_exit(char *str);
+bool				check_sharp(char **splited);
+bool				check_hypen(char **splited);
+char				*skip_option_flg(char *str);
+char				*skip_or_delete(char *str);
+unsigned long int	exit_atoi(const char *str, bool *err_flg);
 
 #endif

@@ -60,7 +60,9 @@ DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?=	exit
+SRCNAME	?=	exit \
+			exit_utils \
+			ctrl_d
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
