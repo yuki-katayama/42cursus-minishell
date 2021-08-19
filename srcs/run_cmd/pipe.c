@@ -2,6 +2,7 @@
 #include "../../includes/utils.h"
 #include "../../includes/lexer.h"
 
+
 int	ft_strcmp(const char *s1, const char *s2)
 {
 	while (*s1 && *s2)
@@ -18,8 +19,35 @@ char	*msh_get_env(char *key, t_env *env)
 			return (env->value);
 		env = env->next;
 	}
-	return ("");
+	return ("null");
 }
+
+t_env	*init_env(char **envp)
+{
+	t_env	*head;
+	t_env	**cur;
+	char	*str;
+
+	head = NULL;
+	cur = &head;
+	while (*envp)
+	{
+		*cur = malloc(sizeof(**cur));
+		str = *envp;
+		while (*str && *str != '=')
+			++str;
+		*str = '\0';
+		**cur = (t_env)
+		{
+			.key = ft_strdup(*envp),
+			.value = ft_strdup(++str)
+		};
+		++envp;
+		cur = &(*cur)->next;
+	}
+	return (head);
+}
+
 
 static char	*sub_split(const char *start, const char *end)
 {
@@ -124,12 +152,27 @@ char	*ft_strchr(const char *str, int c)
 	return (NULL);
 }
 
-char	*expand_environment_variables_helper(char *str, size_t idx, t_env *env)
+static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
+{
+	int	flag;
+
+	flag = 0;
+	*start = ++*str;
+	while (**str && **str != '$')
+		++*str;
+	if (**str == '$')
+		**str = '\0', ++flag;
+	*start = msh_get_env(*start, env);
+	*len = ft_strlen(*start);
+	if (flag)
+		**str = '$';
+}
+
+static char	*expand_env_helper(char *str, size_t idx, t_env *env)
 {
 	char	*ret;
 	char	*start;
 	size_t	len;
-	int		flag;
 
 	if (!*str)
 	{
@@ -139,18 +182,7 @@ char	*expand_environment_variables_helper(char *str, size_t idx, t_env *env)
 		return (ret);
 	}
 	if (*str == '$')
-	{
-		flag = 0;
-		start = ++str;
-		while (*str && *str != '$')
-			++str;
-		if (*str == '$')
-			*str = '\0', ++flag;
-		start = msh_get_env(start, env);
-		len = ft_strlen(start);
-		if (flag)
-			*str = '$';
-	}
+		start_with_dollar(&str, &start, env, &len);
 	else
 	{
 		start = str;
@@ -158,12 +190,13 @@ char	*expand_environment_variables_helper(char *str, size_t idx, t_env *env)
 			++str;
 		len = str - start;
 	}
-	ret = expand_environment_variables_helper(str, idx + len, env);
+	ret = expand_env_helper(str, idx + len, env);
 	while (len--)
 		ret[idx + len] = start[len];
 	return (ret);
 }
-t_token	*expand_environment_variables_split(t_token *token, t_env *env)
+
+static t_token	*split_env(t_token *token, t_env *env)
 {
 	char	*str;
 	char	*start;
@@ -174,18 +207,17 @@ t_token	*expand_environment_variables_split(t_token *token, t_env *env)
 	next = token->next;
 	ret = NULL;
 	cur = &ret;
-	str = expand_environment_variables_helper(token->str, 0, env);
+	str = expand_env_helper(token->str, 0, env);
+	free(token->str);
+	token->str = str;
 	while (*str)
 	{
 		str = skip(str);
 		start = str;
-		*cur = malloc(sizeof(**cur));
 		str = skip_until_c(str, ' ');
-		**cur = (t_token)
-		{
-			.str = msh_substr(start, str),
-			.kind = token->kind
-		};
+		*cur = malloc(sizeof(**cur));
+		(*cur)->str = msh_substr(start, str);
+		(*cur)->kind = token->kind;
 		cur = &(*cur)->next;
 	}
 	*cur = next;
@@ -194,17 +226,18 @@ t_token	*expand_environment_variables_split(t_token *token, t_env *env)
 	return (ret);
 }
 
-void	expand_environment_variables(t_token **token, t_env *env)
+void	expand_env(t_token **token, t_env *env)
 {
 	while (*token)
 	{
 		if ((*token)->status == ST_SP && ft_strchr((*token)->str, '$'))
-			*token = expand_environment_variables_split(*token, env);
+			*token = split_env(*token, env);
 		if ((*token)->status == ST_SQ && ft_strchr((*token)->str, '$'))
-			(*token)->str = expand_environment_variables_helper((*token)->str, 0, env);
+			(*token)->str = expand_env_helper((*token)->str, 0, env);
 		token = &(*token)->next;
 	}
 }
+
 
 char	*format_path(char *cmd, char **path)
 {
@@ -279,9 +312,9 @@ void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env)
 	int	input_fd;
 
 	close(pipe_fd[READ]);
-	expand_environment_variables(&node->cmd, env);
-	expand_environment_variables(&node->input, env);
-	expand_environment_variables(&node->output, env);
+	expand_env(&node->cmd, env);
+	expand_env(&node->input, env);
+	expand_env(&node->output, env);
 	if (node->input)
 		dup2(input_fd = open_input(node->input), READ), close(input_fd);
 	if (node->output)
@@ -318,30 +351,4 @@ void	multi_level_pipe(t_node *node, t_env *env)
 		node = node->next;
 	}
 	//free split
-}
-
-t_env	*init_env(char **envp)
-{
-	t_env	*head;
-	t_env	**cur;
-	char	*str;
-
-	head = NULL;
-	cur = &head;
-	while (*envp)
-	{
-		*cur = malloc(sizeof(**cur));
-		str = *envp;
-		while (*str && *str != '=')
-			++str;
-		*str = '\0';
-		**cur = (t_env)
-		{
-			.key = ft_strdup(*envp),
-			.value = ft_strdup(++str)
-		};
-		++envp;
-		cur = &(*cur)->next;
-	}
-	return (head);
 }
