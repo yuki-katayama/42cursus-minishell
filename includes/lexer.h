@@ -18,9 +18,6 @@ enum e_status
 enum e_kind
 {
 	TK_CMD,
-	TK_OP,
-	TK_SQ,
-	TK_DQ,
 	TK_RI,
 	TK_DRI,
 	TK_RO,
@@ -32,6 +29,7 @@ struct s_token
 	t_status	status;
 	t_kind		kind;
 	char		*str;
+	size_t		group;
 	t_token		*next;
 };
 
@@ -43,6 +41,6 @@ struct s_node
 	t_node	*next;
 };
 
-t_token	*tokenize_helper(char **str, t_kind kind);
+t_token	*tokenize_helper(char **str, t_kind kind, size_t group);
 
 #endif

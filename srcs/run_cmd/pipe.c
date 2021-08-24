@@ -19,7 +19,7 @@ char	*msh_get_env(char *key, t_env *env)
 			return (env->value);
 		env = env->next;
 	}
-	return ("null");
+	return ("");
 }
 
 t_env	*init_env(char **envp)
@@ -218,6 +218,7 @@ static t_token	*split_env(t_token *token, t_env *env)
 		*cur = malloc(sizeof(**cur));
 		(*cur)->str = msh_substr(start, str);
 		(*cur)->kind = token->kind;
+		(*cur)->group = token->group;
 		cur = &(*cur)->next;
 	}
 	*cur = next;
@@ -225,14 +226,52 @@ static t_token	*split_env(t_token *token, t_env *env)
 	free(token);
 	return (ret);
 }
+static int	is_marge(t_token *cur, t_token *next)
+{
+	return (cur->group == next->group && !(cur->status == ST_SP && next->status == ST_SP));
+}
+int	marge_token_helper(t_token **token)
+{
+	char	*tmp_str;
+	int		ret;
 
+	ret = 0;
+	while (*token && (*token)->next)
+	{
+		if (is_marge(*token, (*token)->next))
+		{
+			tmp_str = ft_strjoin((*token)->str, (*token)->next->str);
+			free((*token)->next->str);
+			(*token)->next->str = tmp_str;
+			free((*token)->str);
+			free(*token);
+			*token = (*token)->next;
+			ret = 1;
+		}
+		else
+			token = &(*token)->next;
+	}
+	return (ret);
+}
+void	marge_token(t_node *node)
+{
+	while (marge_token_helper(&node->cmd))
+		;
+	while (marge_token_helper(&node->input))
+		;
+	while (marge_token_helper(&node->output))
+		;
+}
 void	expand_env(t_token **token, t_env *env)
 {
+	int	is_dollar;
+
 	while (*token)
 	{
-		if ((*token)->status == ST_SP && ft_strchr((*token)->str, '$'))
+		is_dollar = !!ft_strchr((*token)->str, '$');
+		if ((*token)->status == ST_SP && is_dollar)
 			*token = split_env(*token, env);
-		if ((*token)->status == ST_SQ && ft_strchr((*token)->str, '$'))
+		if ((*token)->status == ST_DQ && is_dollar)
 			(*token)->str = expand_env_helper((*token)->str, 0, env);
 		token = &(*token)->next;
 	}
@@ -315,6 +354,7 @@ void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env)
 	expand_env(&node->cmd, env);
 	expand_env(&node->input, env);
 	expand_env(&node->output, env);
+	marge_token(node);
 	if (node->input)
 		dup2(input_fd = open_input(node->input), READ), close(input_fd);
 	if (node->output)
@@ -338,7 +378,9 @@ void	multi_level_pipe(t_node *node, t_env *env)
 	int		pipe_fd[PIPE];
 	pid_t	pid;
 	char	**path;
+	int		read_fd;
 
+	read_fd = dup(READ);
 	path =  ft_split(msh_get_env("PATH", env), ':');
 	while (node)
 	{
@@ -350,5 +392,6 @@ void	multi_level_pipe(t_node *node, t_env *env)
 			adult_process(pipe_fd, node);
 		node = node->next;
 	}
+	dup2(READ, read_fd), close(READ);
 	//free split
 }

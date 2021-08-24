@@ -4,84 +4,98 @@
 
 void	lst_add_back(t_token **token, t_token *new)
 {
-	while (*token)
-		token = &(*token)->next;
-	*token = new;
+		while (*token)
+			token = &(*token)->next;
+		*token = new;
 }
 
-t_token	*tokenize_helper(char **str, t_kind kind)
+t_token *tokenize_helper(char **str, t_kind kind, size_t group)
 {
-	t_token	*ret;
-	char	*start;
+		t_token *ret;
+		t_token **cur;
+		char    *start;
 
-	ret = malloc(sizeof(*ret));
-	if (!ret)
-		exit(1);
-	ret->kind = kind;
-	ret->next = NULL;
-	*str = skip(*str);
-	if (**str == '\'')
-		*str = skip_until_c(start = ++*str, '\''), ret->status = ST_SQ;
-	else if (**str == '"')
-		*str = skip_until_c(start = ++*str, '"'), ret->status = ST_DQ;
-	else
-		*str = skip_until_c(start = *str, ' '), ret->status = ST_SP;
-	ret->str = msh_substr(start, *str);
-	if (**str)
-		++*str;
-	return (ret);
+		ret = NULL;
+		cur = &ret;
+		*str = skip(*str);
+		while (**str && **str != ' ')
+		{
+				*cur = malloc(sizeof(*ret));
+				if (**str == '\'')
+					*str = skip_until_c(start = ++*str, '\''), (*cur)->status = ST_SQ;
+                else if (**str == '"')
+					*str = skip_until_c(start = ++*str, '"'), (*cur)->status = ST_DQ;
+				else
+				{
+						start = *str;
+						while (**str && **str != ' ' && **str != '\'' && **str != '"')
+							++*str;
+						(*cur)->status = ST_SP;
+				}
+				(*cur)->kind = kind;
+				(*cur)->group = group;
+				(*cur)->next = NULL;
+				(*cur)->str = msh_substr(start, *str);
+				if ((*cur)->status != ST_SP && (**str == '\'' || **str == '"'))
+					++*str;
+				cur = &(*cur)->next;
+		}
+		return (ret);
 }
 
-t_node	tokenize(char *str)
+t_node  tokenize(char *str)
 {
-	t_node	node;
+		t_node  node;
+		size_t  group;
 
-	node = (t_node){};
-	str = skip(str);
-	while (*str)
-	{
-		if (*str == '<' && *(str + 1) != '<')
-			++str, lst_add_back(&node.input, tokenize_helper(&str, TK_RI));
-		else if (*str == '<' && *(str + 1) == '<')
-			str += 2, lst_add_back(&node.input, tokenize_helper(&str, TK_DRI));
-		else if (*str == '>' && *(str + 1) != '>')
-			++str, lst_add_back(&node.output, tokenize_helper(&str, TK_RO));
-		else if (*str == '>' && *(str + 1) == '>')
-			str += 2, lst_add_back(&node.output, tokenize_helper(&str, TK_DRO));
-		else
-			lst_add_back(&node.cmd, tokenize_helper(&str, TK_CMD));
+		group = 0;
+		node = (t_node){};
 		str = skip(str);
-	}
-	return (node);
+		while (*str)
+		{
+			if (*str == '<' && str[1] != '<')
+				++str, lst_add_back(&node.input, tokenize_helper(&str, TK_RI, group));
+			else if (*str == '<' && str[1] == '<')
+				str += 2, lst_add_back(&node.input, tokenize_helper(&str, TK_DRI, group));
+			else if (*str == '>' && str[1] != '>')
+				++str, lst_add_back(&node.output, tokenize_helper(&str, TK_RO, group));
+			else if (*str == '>' && str[1] == '>')
+				str += 2, lst_add_back(&node.output, tokenize_helper(&str, TK_DRO, group));
+			else
+				lst_add_back(&node.cmd, tokenize_helper(&str, TK_CMD, group));
+			str = skip(str);
+			++group;
+		}
+		return (node);
 }
 
 t_node	*nodalize(char *str)
 {
-	t_node	*head;
-	t_node	**cur;
-	char	*start;
+		t_node	*head;
+		t_node	**cur;
+		char	*start;
 
-	head = NULL;
-	cur = &head;
-	while (str && *str)
-	{
-		*cur = malloc(sizeof(**cur));
-		if (!*cur)
-			exit(1);
-		start = str;
-		while (*str && *str != '|')
+		head = NULL;
+		cur = &head;
+		while (str && *str)
 		{
-			if (*str == '\'')
-				str = skip_until_c(str, '\'');
-			else if (*str == '"')
-				str = skip_until_c(str, '"');
-			++str;
+			*cur = malloc(sizeof(**cur));
+			if (!*cur)
+				exit(1);
+				start = str;
+				while (*str && *str != '|')
+				{
+					if (*str == '\'')
+						str = skip_until_c(str, '\'');
+					else if (*str == '"')
+						str = skip_until_c(str, '"');
+					++str;
+				}
+			*str && (*str++ = '\0');
+			**cur = tokenize(start);
+			cur = &(*cur)->next;
 		}
-		*str && (*str++ = '\0');
-		**cur = tokenize(start);
-		cur = &(*cur)->next;
-	}
-	return (head);
+		return (head);
 }
 
 #include <string.h>
@@ -89,10 +103,8 @@ t_node	*nodalize(char *str)
 
 int main(int argc, char const *argv[], char **envp)
 {
-	printf("%d\n", execve("/bin/echo", (char *[]){"echo", "$$", NULL}, NULL));
-	/*t_node *node = nodalize(strdup("echo $$ hello | cat | cat > outfile"));
-	t_env *env = init_env(envp);
-	multi_level_pipe(node, env);
-	printf("%s\n", getenv("$$"));*/
-	return 0;
+		t_node *node = nodalize(strdup("echo hello\"$PATH\""));
+		t_env *env = init_env(envp);
+		multi_level_pipe(node, env);
+		return 0;
 }
