@@ -103,8 +103,9 @@ t_node	*nodalize(char *str)
 
 int main(int argc, char const *argv[], char **envp)
 {
-		t_node *node = nodalize(strdup("echo hello\"$PATH\""));
+		t_node *node = nodalize(strdup("cat << end | cat -e | << end cat "));
 		t_env *env = init_env(envp);
+		//perror("execve");
 		multi_level_pipe(node, env);
 		return 0;
 }

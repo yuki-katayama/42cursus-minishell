@@ -45,6 +45,12 @@ t_env	*init_env(char **envp)
 		++envp;
 		cur = &(*cur)->next;
 	}
+	*cur = malloc(sizeof(**cur));
+	**cur = (t_env)
+		{
+			.key = ft_strdup("TEST"),
+			.value = ft_strdup("o  -n   aaaa")
+		};
 	return (head);
 }
 
@@ -104,9 +110,15 @@ size_t	ft_strlen(const char *str)
 	size_t	len;
 
 	len = 0;
-	while (str[len])
+	while (str && str[len])
 		++len;
 	return (len);
+}
+
+void	ft_puts(char *str, int fd)
+{
+	write(fd, str, ft_strlen(str));
+	write(fd, "\n", 1);
 }
 
 char	*ft_strdup(const char *str)
@@ -230,12 +242,10 @@ static int	is_marge(t_token *cur, t_token *next)
 {
 	return (cur->group == next->group && !(cur->status == ST_SP && next->status == ST_SP));
 }
-int	marge_token_helper(t_token **token)
+void	marge_token_helper(t_token **token)
 {
 	char	*tmp_str;
-	int		ret;
 
-	ret = 0;
 	while (*token && (*token)->next)
 	{
 		if (is_marge(*token, (*token)->next))
@@ -246,21 +256,16 @@ int	marge_token_helper(t_token **token)
 			free((*token)->str);
 			free(*token);
 			*token = (*token)->next;
-			ret = 1;
 		}
 		else
 			token = &(*token)->next;
 	}
-	return (ret);
 }
 void	marge_token(t_node *node)
 {
-	while (marge_token_helper(&node->cmd))
-		;
-	while (marge_token_helper(&node->input))
-		;
-	while (marge_token_helper(&node->output))
-		;
+	marge_token_helper(&node->cmd);
+	marge_token_helper(&node->input);
+	marge_token_helper(&node->output);
 }
 void	expand_env(t_token **token, t_env *env)
 {
@@ -276,7 +281,6 @@ void	expand_env(t_token **token, t_env *env)
 		token = &(*token)->next;
 	}
 }
-
 
 char	*format_path(char *cmd, char **path)
 {
@@ -315,16 +319,43 @@ char	**format_command(t_token *token, size_t idx)
 	return (ret);
 }
 
-int	open_input(t_token *token)
+int	here_doc(char *str, int read, t_env *env)
+{
+	int	pipe_fd[PIPE];
+	int	tmp_fd;
+	char *line;
+
+	tmp_fd = dup(READ);
+	dup2(read, READ);
+	pipe(pipe_fd);
+	while (1)
+	{
+		line = readline("> ");
+		if (!ft_strcmp(str, line))
+			break ;
+		if (line)
+			ft_puts(expand_env_helper(line, 0, env), pipe_fd[WRITE]);
+		free(line);
+	}
+	close(pipe_fd[WRITE]);
+	free(line);
+	dup2(tmp_fd, read);
+	return (pipe_fd[READ]);
+}
+
+int	open_input(t_token *token, int read_fd, t_env *env)
 {
 	int	ret;
 
+	ret = -1;
 	while (token)
 	{
+		if (ret != -1)
+			close(ret);
 		if (token->kind == TK_RI)
 			ret = open(token->str, O_RDONLY);
 		if (token->kind == TK_DRI)
-			/*ret = here_doc(token->str)*/;
+			ret = here_doc(token->str, read_fd, env);
 		token = token->next;
 	}
 	return (ret);
@@ -334,8 +365,11 @@ int	open_output(t_token *token)
 {
 	int	ret;
 
+	ret = -1;
 	while (token)
 	{
+		if (ret != -1)
+			close(ret);
 		if (token->kind == TK_RO)
 			ret = open(token->str, O_WRONLY | O_CREAT | O_TRUNC, S_IREAD | S_IWRITE);
 		if (token->kind == TK_DRO)
@@ -345,7 +379,8 @@ int	open_output(t_token *token)
 	return (ret);
 }
 
-void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env)
+
+void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env, int read_fd)
 {
 	int	output_fd;
 	int	input_fd;
@@ -356,7 +391,7 @@ void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env)
 	expand_env(&node->output, env);
 	marge_token(node);
 	if (node->input)
-		dup2(input_fd = open_input(node->input), READ), close(input_fd);
+		dup2(input_fd = open_input(node->input, read_fd, env), READ), close(input_fd);
 	if (node->output)
 		dup2(output_fd = open_output(node->output), WRITE), close(output_fd);
 	else if (node->next)
@@ -367,7 +402,7 @@ void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env)
 
 void	adult_process(int *pipe_fd, t_node *node)
 {
-	if (!node->next)
+	//if (!node->next)
 		wait(NULL);
 	close(pipe_fd[WRITE]);
 	dup2(pipe_fd[READ], READ), close(pipe_fd[READ]);
@@ -387,7 +422,7 @@ void	multi_level_pipe(t_node *node, t_env *env)
 		pipe(pipe_fd);
 		pid = fork();
 		if (!pid)
-			child_process(pipe_fd, node, path, env);
+			child_process(pipe_fd, node, path, env, read_fd);
 		else
 			adult_process(pipe_fd, node);
 		node = node->next;
