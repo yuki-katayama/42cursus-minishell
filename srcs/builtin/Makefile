@@ -62,7 +62,8 @@ STCSDIR	?= ../../stcs
 #-----------SET SRCS-------------#
 SRCNAME	?=	exit \
 			exit_utils \
-			ctrl_d
+			ctrl_d \
+			cd
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
