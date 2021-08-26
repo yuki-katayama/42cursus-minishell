@@ -24,6 +24,10 @@ int	main(int argc, char **test)
 						"exit ", ft_strlen("exit ")) == 0) \
 		|| ft_strcmp(argv, "exit") == 0)
 			ft_exit(argv);
+		else if ((ft_strncmp(argv,
+						"cd ", ft_strlen("cd ")) == 0) ||
+			(ft_strcmp(argv, "cd") == 0))
+			ft_cd(argv + 3);
 		free(argv);
 	}
 	return (0);
