@@ -3,6 +3,18 @@
 #include "../includes/utils.h"
 #include "../includes/builtin.h"
 
+int select_buildin(char *argv)
+{
+	if ((ft_strncmp(argv, \
+						"exit ", ft_strlen("exit ")) == 0) \
+		|| ft_strcmp(argv, "exit") == 0)
+			return (1);
+	else if ((ft_strncmp(argv,
+						"cd ", ft_strlen("cd ")) == 0)
+		|| (ft_strcmp(argv, "cd") == 0))
+			return (2);
+}
+
 int	main(int argc, char **test)
 {
 	char	*argv;
@@ -20,14 +32,12 @@ int	main(int argc, char **test)
 		if (argv == NULL)
 			ft_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
-		if ((ft_strncmp(argv, \
-						"exit ", ft_strlen("exit ")) == 0) \
-		|| ft_strcmp(argv, "exit") == 0)
-			ft_exit(argv);
-		else if ((ft_strncmp(argv,
-						"cd ", ft_strlen("cd ")) == 0) ||
-			(ft_strcmp(argv, "cd") == 0))
-			ft_cd(argv + 3);
+		if (select_buildin(argv) == 1)
+			ft_exit(argv + ft_strlen("exit"));
+		if (select_buildin(argv) == 2)
+			ft_cd(argv + ft_strlen("cd"));
+		if (select_buildin(argv) == 2)
+			ft_cd(argv + ft_strlen("pwd"));
 		free(argv);
 	}
 	return (0);
