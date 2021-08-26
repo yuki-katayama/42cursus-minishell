@@ -25,4 +25,7 @@ unsigned long int	exit_atoi(const char *str, bool *err_flg);
 // cd
 int					ft_cd(char *str);
 
+// pwd
+void				ft_pwd(void);
+
 #endif
