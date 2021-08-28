@@ -52,7 +52,7 @@ void	ft_exit(char *str)
 
 	if (TEST)
 		ft_putendl_fd("exit", STDERR_FILENO);
-	splited = &msh_split_quates(str, ' ')[1];
+	splited = msh_split_quates(str, ' ');
 	len = ft_arraylen(splited);
 	if (len < 3)
 		arraylen_under_three(splited);

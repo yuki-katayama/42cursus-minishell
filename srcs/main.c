@@ -2,10 +2,29 @@
 #include "../includes/signal.h"
 #include "../includes/utils.h"
 #include "../includes/builtin.h"
+#include "../libft/libft.h"
+
+int select_buildin(char *argv)
+{
+	if ((ft_strncmp(argv, \
+						"exit ", ft_strlen("exit ")) == 0) \
+		|| ft_strcmp(argv, "exit") == 0)
+			return (1);
+	else if ((ft_strncmp(argv,
+						"cd ", ft_strlen("cd ")) == 0)
+		|| (ft_strcmp(argv, "cd") == 0))
+			return (2);
+	else if ((ft_strncmp(argv,
+						"pwd ", ft_strlen("pwd ")) == 0)
+		|| (ft_strcmp(argv, "pwd") == 0))
+			return (3);
+	return (0);
+}
 
 int	main(int argc, char **test)
 {
 	char	*argv;
+	uint8_t select;
 
 	(void)argc;
 	while (1)
@@ -20,10 +39,13 @@ int	main(int argc, char **test)
 		if (argv == NULL)
 			ft_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
-		if ((ft_strncmp(argv, \
-						"exit ", ft_strlen("exit ")) == 0) \
-		|| ft_strcmp(argv, "exit") == 0)
-			ft_exit(argv);
+		select = select_buildin(argv);
+		if (select == 1)
+			ft_exit(argv + ft_strlen("exit"));
+		else if (select == 2)
+			ft_cd(argv + ft_strlen("cd"));
+		else if (select == 3)
+			ft_pwd();
 		free(argv);
 	}
 	return (0);
