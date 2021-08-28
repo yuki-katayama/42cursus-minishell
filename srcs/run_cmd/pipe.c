@@ -49,7 +49,7 @@ t_env	*init_env(char **envp)
 	**cur = (t_env)
 		{
 			.key = ft_strdup("TEST"),
-			.value = ft_strdup("o  -n   aaaa")
+			.value = ft_strdup("bbbbb   aaaa")
 		};
 	return (head);
 }
@@ -166,20 +166,20 @@ char	*ft_strchr(const char *str, int c)
 
 static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
 {
-	int	flag;
+	int		c;
+	char	*stoper;
 
-	flag = 0;
+	stoper = "\"'$";
 	*start = ++*str;
-	while (**str && **str != '$')
+	while (**str && !ft_strchr(stoper, **str))
 		++*str;
-	if (**str == '$')
-		**str = '\0', ++flag;
+	c = **str;
+	**str = '\0';
 	*start = msh_get_env(*start, env);
 	*len = ft_strlen(*start);
-	if (flag)
-		**str = '$';
+	**str = c;
 }
-
+//cat test$TEST$TEST
 static char	*expand_env_helper(char *str, size_t idx, t_env *env)
 {
 	char	*ret;
@@ -198,7 +198,7 @@ static char	*expand_env_helper(char *str, size_t idx, t_env *env)
 	else
 	{
 		start = str;
-		while (*str && *str != '$')
+		while (!ft_strchr("$", *str))
 			++str;
 		len = str - start;
 	}
@@ -207,7 +207,7 @@ static char	*expand_env_helper(char *str, size_t idx, t_env *env)
 		ret[idx + len] = start[len];
 	return (ret);
 }
-
+//$TEST-> "aaa aaa bbb" aaa aaa bbb
 static t_token	*split_env(t_token *token, t_env *env)
 {
 	char	*str;
@@ -242,6 +242,7 @@ static int	is_marge(t_token *cur, t_token *next)
 {
 	return (cur->group == next->group && !(cur->status == ST_SP && next->status == ST_SP));
 }
+//aaa"bbb"
 void	marge_token_helper(t_token **token)
 {
 	char	*tmp_str;
@@ -397,7 +398,8 @@ void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env, int read
 	else if (node->next)
 		dup2(pipe_fd[WRITE], WRITE);
 	close(pipe_fd[WRITE]);
-	execve(format_path(node->cmd->str, path), format_command(node->cmd, 0), NULL);
+	if (node->cmd)
+		execve(format_path(node->cmd->str, path), format_command(node->cmd, 0), NULL);
 }
 
 void	adult_process(int *pipe_fd, t_node *node)

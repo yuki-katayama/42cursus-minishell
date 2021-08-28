@@ -18,7 +18,7 @@ t_token *tokenize_helper(char **str, t_kind kind, size_t group)
 		ret = NULL;
 		cur = &ret;
 		*str = skip(*str);
-		while (**str && **str != ' ')
+		while (!ft_strchr(" <>", **str))
 		{
 				*cur = malloc(sizeof(*ret));
 				if (**str == '\'')
@@ -28,7 +28,7 @@ t_token *tokenize_helper(char **str, t_kind kind, size_t group)
 				else
 				{
 						start = *str;
-						while (**str && **str != ' ' && **str != '\'' && **str != '"')
+						while (!ft_strchr(" \"'<>", **str))
 							++*str;
 						(*cur)->status = ST_SP;
 				}
@@ -82,15 +82,15 @@ t_node	*nodalize(char *str)
 			*cur = malloc(sizeof(**cur));
 			if (!*cur)
 				exit(1);
-				start = str;
-				while (*str && *str != '|')
-				{
-					if (*str == '\'')
-						str = skip_until_c(str, '\'');
-					else if (*str == '"')
-						str = skip_until_c(str, '"');
-					++str;
-				}
+			start = str;
+			while (*str && *str != '|')
+			{
+				if (*str == '\'')
+					str = skip_until_c(str, '\'');
+				else if (*str == '"')
+					str = skip_until_c(str, '"');
+				++str;
+			}
 			*str && (*str++ = '\0');
 			**cur = tokenize(start);
 			cur = &(*cur)->next;
@@ -103,9 +103,9 @@ t_node	*nodalize(char *str)
 
 int main(int argc, char const *argv[], char **envp)
 {
-		t_node *node = nodalize(strdup("cat << end | cat -e | << end cat "));
+		t_node *node = nodalize(strdup("echo $TEST\"ffff\""));
 		t_env *env = init_env(envp);
-		//perror("execve");
+		char *line;
 		multi_level_pipe(node, env);
 		return 0;
 }

@@ -33,6 +33,7 @@ char	*msh_get_env(char *key, t_env *env);
 void	marge_token(t_node *node);
 char	**format_command(t_token *token, size_t idx);
 char	*format_path(char *cmd, char **path);
+int	here_doc(char *str, int read, t_env *env);
 int	ft_strcmp(const char *s1, const char *s2);
 char	**ft_split(const char *s, const char c);
 size_t	ft_strlen(const char *str);
