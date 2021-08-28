@@ -4,3 +4,5 @@ minishell
 libft/dps
 libft/obj
 libft/libft.a
+includes/*.gch
+test.c
