@@ -6,3 +6,5 @@ libft/dps
 libft/obj
 libft/libft.a
 .vscode
+includes/*.gch
+test.c
