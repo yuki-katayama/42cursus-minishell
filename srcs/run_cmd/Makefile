@@ -60,16 +60,15 @@ DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?= msh_split_quates \
-			msh_substr
+SRCNAME	?= pipe
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I  -Wall -Wextra -Werror -g
+CFLAGS	?= -I -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
-NAME	?=	utils.a
+NAME	?=	run_cmd.a
 
 CC		?= gcc
 

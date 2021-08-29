@@ -1,11 +1,13 @@
 #include "../../includes/utils.h"
+#include "../../libft/libft.h"
 
 char	*msh_substr(char *start, char *end)
 {
 	char	*ret;
 	size_t	idx;
 
-	ret = malloc(sizeof(*ret) * (end - start + 1));
+	if (!(ft_malloc_p((void **)&ret, sizeof(char *) * (end - start + 1))))
+		return (NULL);
 	if (!ret)
 		exit(1);
 	idx = 0;

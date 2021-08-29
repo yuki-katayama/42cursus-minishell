@@ -1,15 +1,8 @@
 #include "../../includes/pipe.h"
-#include "../../includes/utils.h"
 #include "../../includes/lexer.h"
+#include "../../includes/utils.h"
 
-
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	while (*s1 && *s2)
-	if (*s1++ != *s2++)
-		return (1);
-	return (!(!*s1 && !*s2));
-}
+#include "../../libft/libft.h"
 
 char	*msh_get_env(char *key, t_env *env)
 {
@@ -32,7 +25,8 @@ t_env	*init_env(char **envp)
 	cur = &head;
 	while (*envp)
 	{
-		*cur = malloc(sizeof(**cur));
+		if(!(ft_malloc_p((void **)&*cur, sizeof(t_env))))
+			return (NULL);
 		str = *envp;
 		while (*str && *str != '=')
 			++str;
@@ -45,7 +39,8 @@ t_env	*init_env(char **envp)
 		++envp;
 		cur = &(*cur)->next;
 	}
-	*cur = malloc(sizeof(**cur));
+	if(!(ft_malloc_p((void **)&*cur, sizeof(t_env))))
+		return (NULL);
 	**cur = (t_env)
 		{
 			.key = ft_strdup("TEST"),
@@ -60,7 +55,8 @@ static char	*sub_split(const char *start, const char *end)
 	char	*ret;
 	size_t	idx;
 
-	ret = malloc(sizeof(char) * (end - start + 1));
+	if(!(ft_malloc_p((void **)&ret, sizeof(char *) * (end - start + 1))))
+		return (NULL);
 	if (!ret)
 		return (NULL);
 	idx = 0;
@@ -79,7 +75,8 @@ static char	**rec_split(const char *str, const char c, size_t idx)
 		++str;
 	if (!*str)
 	{
-		ret = malloc(sizeof(char *) * (idx + 1));
+		if(!(ft_malloc_p((void **)&ret, sizeof(char *) * (idx + 1))))
+			return (NULL);
 		if (ret)
 			ret[idx] = NULL;
 		return (ret);
@@ -105,63 +102,10 @@ char	**ft_split(const char *s, const char c)
 	return (rec_split((char *)s, c, 0));
 }
 
-size_t	ft_strlen(const char *str)
-{
-	size_t	len;
-
-	len = 0;
-	while (str && str[len])
-		++len;
-	return (len);
-}
-
 void	ft_puts(char *str, int fd)
 {
 	write(fd, str, ft_strlen(str));
 	write(fd, "\n", 1);
-}
-
-char	*ft_strdup(const char *str)
-{
-	char	*ret;
-	size_t	idx;
-
-	ret = malloc(sizeof(*ret) * (ft_strlen(str) + 1));
-	idx = 0;
-	while (*str)
-		ret[idx++] = *str++;
-	ret[idx] = '\0';
-	return (ret);
-}
-
-char	*ft_strjoin(const char *s1, const char *s2)
-{
-	char	*ret;
-	size_t	idx;
-
-	if (!s1 || !s2)
-		return (NULL);
-	ret = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
-	idx = 0;
-	while (*s1)
-		ret[idx++] = *s1++;
-	while (*s2)
-		ret[idx++] = *s2++;
-	ret[idx] = '\0';
-	return (ret);
-}
-
-char	*ft_strchr(const char *str, int c)
-{
-	while (*str)
-	{
-		if (*str == (char)c)
-			return ((char *)str);
-		++str;
-	}
-	if (!c)
-		return ((char *)str);
-	return (NULL);
 }
 
 static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
@@ -188,7 +132,8 @@ static char	*expand_env_helper(char *str, size_t idx, t_env *env)
 
 	if (!*str)
 	{
-		ret = malloc(sizeof(*ret) * (idx + 1));
+		if(!(ft_malloc_p((void **)&ret, sizeof(char *) * (idx + 1))))
+			return (NULL);
 		if (ret)
 			ret[idx] = '\0';
 		return (ret);
@@ -224,10 +169,12 @@ static t_token	*split_env(t_token *token, t_env *env)
 	token->str = str;
 	while (*str)
 	{
-		str = skip(str);
+		str = ft_spaceskip(str);
 		start = str;
-		str = skip_until_c(str, ' ');
-		*cur = malloc(sizeof(**cur));
+		str++;
+		str = ft_untilskip(str, ' ');
+		if(!(ft_malloc_p((void **)&*cur, sizeof(t_token))))
+			return (NULL);
 		(*cur)->str = msh_substr(start, str);
 		(*cur)->kind = token->kind;
 		(*cur)->group = token->group;
@@ -288,7 +235,6 @@ char	*format_path(char *cmd, char **path)
 	char		*ret;
 	char		*tmp;
 	struct stat	sb;
-	
 
 	tmp = ft_strjoin("/", cmd);
 	while (path)
@@ -309,7 +255,8 @@ char	**format_command(t_token *token, size_t idx)
 
 	if (!token)
 	{
-		ret = malloc(sizeof(*ret) * (idx + 1));
+		if(!(ft_malloc_pp((void ***)&ret, sizeof(char **) * (idx + 1))))
+			return (NULL);
 		if (ret)
 			ret[idx] = NULL;
 		return (ret);
@@ -326,12 +273,13 @@ int	here_doc(char *str, int read, t_env *env)
 	int	tmp_fd;
 	char *line;
 
+	line = NULL;
 	tmp_fd = dup(READ);
 	dup2(read, READ);
 	pipe(pipe_fd);
 	while (1)
 	{
-		line = readline("> ");
+		// line = readline("> ");
 		if (!ft_strcmp(str, line))
 			break ;
 		if (line)
@@ -404,7 +352,7 @@ void	child_process(int *pipe_fd, t_node *node, char **path, t_env *env, int read
 
 void	adult_process(int *pipe_fd, t_node *node)
 {
-	//if (!node->next)
+	if (!node->next)
 		wait(NULL);
 	close(pipe_fd[WRITE]);
 	dup2(pipe_fd[READ], READ), close(pipe_fd[READ]);

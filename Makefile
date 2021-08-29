@@ -68,7 +68,9 @@ SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 STCSNAME ?=	signal \
 			builtin \
 			error \
-			utils
+			utils \
+			run_cmd \
+			lexer
 
 STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
 
@@ -81,14 +83,12 @@ SANFLAGS ?=	-g -fsanitize=address
 
 #-------------SET STCS VARIABLES----------#
 STCS_SIGNAL	?= signal
-
 STCS_UTILS	?= utils
-
 STCS_LIBFT	?= libft
-
 STCS_BUILTIN ?= builtin
-
 STCS_ERROR ?= error
+STCS_LEXER ?= lexer
+STCS_RUNCMD ?= run_cmd
 
 #-------------SET OTHER VARIEBLE-----------#
 NAME	?=	minishell
@@ -107,7 +107,7 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
 .PHONY: all
 all	: $(STCS_LIBFT) $(STCS_SIGNAL) $(STCS_ERROR) $(STCS_BUILTIN) \
-		$(STCS_UTILS) $(NAME) ## Run minishell
+		$(STCS_UTILS) $(STCS_RUNCMD) $(STCS_LEXER) $(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
@@ -133,6 +133,14 @@ $(STCS_UTILS):
 .PHONY: $(STCS_ERROR)
 $(STCS_ERROR):
 	@$(MAKE) -C $(SRCDIR)/$(STCS_ERROR)/.
+
+.PHONY: $(STCS_LEXER)
+$(STCS_RUNCMD):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_RUNCMD)/.
+
+.PHONY: $(STCS_RUNCMD)
+$(STCS_LEXER):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_LEXER)/.
 
 $(NAME):	$(OBJS)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"

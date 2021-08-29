@@ -60,16 +60,15 @@ DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?= msh_split_quates \
-			msh_substr
+SRCNAME	?= tokenize
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I  -Wall -Wextra -Werror -g
+CFLAGS	?= -I -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
-NAME	?=	utils.a
+NAME	?=	lexer.a
 
 CC		?= gcc
 
