@@ -1,13 +1,11 @@
 #ifndef PIPE_H
 # define PIPE_H
 
-# include <unistd.h>
-# include <sys/wait.h>
-# include <fcntl.h>
-# include <stdlib.h>
-# include <sys/stat.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+# include <unistd.h> // dup2 dup fork execve pipe write
+# include <sys/wait.h> // wait
+# include <fcntl.h> // open close
+# include <sys/stat.h> // stat
+# include <stdlib.h> // free
 # include "lexer.h"
 
 enum e_pipe
@@ -34,11 +32,6 @@ void	marge_token(t_node *node);
 char	**format_command(t_token *token, size_t idx);
 char	*format_path(char *cmd, char **path);
 int	here_doc(char *str, int read, t_env *env);
-int	ft_strcmp(const char *s1, const char *s2);
 char	**ft_split(const char *s, const char c);
-size_t	ft_strlen(const char *str);
-char	*ft_strdup(const char *str);
-char	*ft_strjoin(const char *s1, const char *s2);
-char	*ft_strchr(const char *str, int c);
 
 #endif
