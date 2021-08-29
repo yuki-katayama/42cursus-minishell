@@ -69,7 +69,7 @@ SRCNAME	?=	exit \
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
+CFLAGS	?= -I -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
 NAME	?=	builtin.a
