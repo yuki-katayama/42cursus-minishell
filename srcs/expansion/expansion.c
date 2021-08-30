@@ -14,7 +14,10 @@ static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
 		++*str;
 	c = **str;
 	**str = '\0';
-	*start = msh_get_env(*start, env);
+	if (!**start)
+		*start = "$";
+	else
+		*start = msh_get_env(*start, env);
 	*len = ft_strlen(*start);
 	**str = c;
 }

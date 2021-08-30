@@ -98,6 +98,6 @@ void	multi_level_pipe(t_node *node, t_env *env)
 			adult_process(pipe_fd, node);
 		node = node->next;
 	}
-	dup2(READ, read_fd), close(READ);
+	dup2(read_fd, READ), close(read_fd);
 	//free split
 }
