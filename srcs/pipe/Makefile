@@ -61,7 +61,10 @@ STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
 SRCNAME	?= pipe \
-			here_doc
+			here_doc \
+			format \
+			open_io \
+			merge
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 

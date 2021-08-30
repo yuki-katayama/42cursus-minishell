@@ -24,5 +24,6 @@ char	*ft_untilskip(char *str, char c);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *src);
 char	*ft_strjoin(char const *s1, char const *s2);
+char	**ft_split(const char *s, const char c);
 
 #endif

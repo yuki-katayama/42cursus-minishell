@@ -107,6 +107,8 @@ t_node	*nodalize(char *str)
 
 // int main(int argc, char const *argv[], char **envp)
 // {
+// 		(void)argc;
+// 		(void)argv;
 // 		t_node *node = nodalize(strdup("echo a | echo $TEST"));
 // 		// t_node *node = nodalize(strdup("echo a > test"));
 // 		t_env *env = init_env(envp);

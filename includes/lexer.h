@@ -39,7 +39,6 @@ struct s_node
 	t_node	*next;
 };
 
-t_token	*tokenize_helper(char **str, t_kind kind, size_t group);
 t_node	*nodalize(char *str);
 
 #endif
