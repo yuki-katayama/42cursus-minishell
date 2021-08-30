@@ -2,6 +2,9 @@
 #include "../includes/signal.h"
 #include "../includes/utils.h"
 #include "../includes/builtin.h"
+#include "../includes/lexer.h"
+#include "../includes/pipe.h"
+#include "../includes/utils.h"
 #include "../libft/libft.h"
 
 int select_buildin(char *argv)
@@ -23,9 +26,14 @@ int select_buildin(char *argv)
 
 int	main(int argc, char **test)
 {
+	extern char **environ;
+	char	**env;
 	char	*argv;
-	uint8_t select;
+	// uint8_t select;
+	t_node	*node;
+	t_env	*st_env;
 
+	env = environ;
 	(void)argc;
 	while (1)
 	{
@@ -39,13 +47,16 @@ int	main(int argc, char **test)
 		if (argv == NULL)
 			ft_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
-		select = select_buildin(argv);
-		if (select == 1)
-			ft_exit(argv + ft_strlen("exit"));
-		else if (select == 2)
-			ft_cd(argv + ft_strlen("cd"));
-		else if (select == 3)
-			ft_pwd();
+		node = nodalize(strdup("echo a > test"));
+		st_env = init_env(env);
+		multi_level_pipe(node, st_env);
+		// select = select_buildin(argv);
+		// if (select == 1)
+		// 	ft_exit(argv + ft_strlen("exit"));
+		// else if (select == 2)
+		// 	ft_cd(argv + ft_strlen("cd"));
+		// else if (select == 3)
+		// 	ft_pwd();
 		free(argv);
 	}
 	return (0);

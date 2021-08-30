@@ -2,10 +2,9 @@
 # define BUILTIN_H
 
 # include <stdlib.h> //exit uint8_t getenv
-# include <stdio.h> //readline
 # include <readline/readline.h> //rl_replace_line, rl_on_new_line, rl_redisplay
 # include <unistd.h> // FILENO chdir getcwd
-# include <limits.h> // LLONG_
+# include <limits.h> // LLONG_ PATH_MAX
 # include <errno.h> //errno
 # include <stdbool.h> //bool
 

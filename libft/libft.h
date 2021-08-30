@@ -20,5 +20,10 @@ char	*ft_charskip(const char *str, char skip);
 void	*ft_free_char(char **word, int index);
 int		ft_arraylen(char **array);
 char	*ft_chardel(char *str, char c);
+char	*ft_untilskip(char *str, char c);
+char	*ft_strchr(const char *s, int c);
+char	*ft_strdup(const char *src);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	**ft_split(const char *s, const char c);
 
 #endif

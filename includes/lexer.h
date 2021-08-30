@@ -1,8 +1,6 @@
 #ifndef LEXER_H
 # define LEXER_H
 
-# include <stdlib.h>
-
 typedef struct s_token	t_token;
 typedef struct s_node	t_node;
 typedef enum e_kind	t_kind;
@@ -41,6 +39,6 @@ struct s_node
 	t_node	*next;
 };
 
-t_token	*tokenize_helper(char **str, t_kind kind, size_t group);
+t_node	*nodalize(char *str);
 
 #endif

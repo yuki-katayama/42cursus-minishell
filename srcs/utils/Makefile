@@ -60,12 +60,13 @@ DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?= msh_split_quates
+SRCNAME	?= msh_split_quates \
+			msh_substr
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
+CFLAGS	?= -I  -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
 NAME	?=	utils.a
@@ -89,9 +90,8 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 -include $(DPS)
 
 $(STCSDIR)/$(NAME):	$(OBJS)
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
 			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
-			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 			@rm -rf ../../minishell
 
 fclean:

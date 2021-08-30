@@ -60,17 +60,31 @@ OBJDIR	?= ./objs
 DPSDIR	?= ./dps
 STCSDIR ?= ./stcs
 
+#-------------SET STCS VARIABLES----------#
+STCS_LIBFT	?= libft
+STCS_SIGNAL	?= signal
+STCS_UTILS ?= utils
+STCS_BUILTIN ?= builtin
+STCS_ERROR ?= error
+STCS_LEXER ?= lexer
+STCS_PIPE ?= pipe
+STCS_EXPANSION ?= expansion
+
+STCSNAME ?= $(STCS_SIGNAL) \
+			$(STCS_UTILS) \
+			$(STCS_BUILTIN) \
+			$(STCS_ERROR) \
+			$(STCS_LEXER) \
+			$(STCS_PIPE) \
+			$(STCS_EXPANSION)
+
+STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
+
 #-----------SET SRCS-------------#
 SRCNAME	?=	main
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
-STCSNAME ?=	signal \
-			builtin \
-			error \
-			utils
-
-STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
 
 #-------------SET FLAGS--------------#
 CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
@@ -79,16 +93,6 @@ LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 
 SANFLAGS ?=	-g -fsanitize=address
 
-#-------------SET STCS VARIABLES----------#
-STCS_SIGNAL	?= signal
-
-STCS_UTILS	?= utils
-
-STCS_LIBFT	?= libft
-
-STCS_BUILTIN ?= builtin
-
-STCS_ERROR ?= error
 
 #-------------SET OTHER VARIEBLE-----------#
 NAME	?=	minishell
@@ -107,7 +111,8 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
 .PHONY: all
 all	: $(STCS_LIBFT) $(STCS_SIGNAL) $(STCS_ERROR) $(STCS_BUILTIN) \
-		$(STCS_UTILS) $(NAME) ## Run minishell
+		$(STCS_UTILS) $(STCS_PIPE) $(STCS_LEXER)  $(STCS_EXPANSION) \
+		$(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
@@ -134,10 +139,21 @@ $(STCS_UTILS):
 $(STCS_ERROR):
 	@$(MAKE) -C $(SRCDIR)/$(STCS_ERROR)/.
 
+.PHONY: $(STCS_PIPE)
+$(STCS_PIPE):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_PIPE)/.
+
+.PHONY: $(STCS_LEXER)
+$(STCS_LEXER):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_LEXER)/.
+
+.PHONY: $(STCS_EXPANSION)
+$(STCS_EXPANSION):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_EXPANSION)/.
+
 $(NAME):	$(OBJS)
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled$(ESC_DEFAULT). 👍\n"
 			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(STCS) -o $(NAME)
-			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 .PHONY: dir
 dir :
@@ -148,9 +164,7 @@ dir :
 .PHONY: san
 san	:	${OBJS} ## Run sanitize using addres
 			@$(MAKE) -s -C libft/.
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
 			@$(CC) $(OBJS) $(SANFLAGS1) $(CFLAGS) $(LDFLAGS) libft/libft.a -o $(NAME)
-			@echo "$(ESC_GREEN)${NAME}: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 .PHONY: clean
 clean	: ## Remove object

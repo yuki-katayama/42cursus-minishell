@@ -1,11 +1,11 @@
 #include "../../includes/builtin.h"
+#include "../../libft/libft.h"
 
-void ft_pwd(void)
+void	ft_pwd(void)
 {
-	char path[300] = {0};
+	char	path[PATH_MAX];
 
 	if (!getcwd(path, sizeof(path)))
 		perror("pwd: ");
-	
-	printf("%s\n", path);
+	ft_putendl_fd(path, STDOUT_FILENO);
 }
