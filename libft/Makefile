@@ -79,7 +79,8 @@ SRCNAME	?=	ft_malloc_p.c \
 			ft_untilskip.c \
 			ft_strchr.c \
 			ft_strdup.c \
-			ft_strjoin.c
+			ft_strjoin.c \
+			ft_split.c
 
 SRCS	?= $(addprefix $(SRCDIR), $(SRCNAME))
 
@@ -110,10 +111,9 @@ $(OBJDIR)/%.o: $(SRCDIR)%.c
 -include $(DPS)
 
 $(NAME):	$(OBJS)
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)libft: All files compiled into '$(OBJDIR)' and '$(DPSDIR)'. $(ESC_DEFAULT)✅\n"
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)libft: All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
 			@ar	rcs	$(NAME)	$(OBJS)
 			@rm -rf ../minishell
-			@echo "$(ESC_GREEN)libft: '$(NAME)' was created. $(ESC_DEFAULT)✅"
 
 clean	: ## Remove object
 			@$(RM) $(OBJDIR)

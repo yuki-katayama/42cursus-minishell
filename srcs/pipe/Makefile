@@ -60,15 +60,16 @@ DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?=	signal
+SRCNAME	?= pipe \
+			here_doc
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
+CFLAGS	?= -I -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
-NAME	?=	signal.a
+NAME	?=	pipe.a
 
 CC		?= gcc
 
@@ -80,7 +81,7 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 #-------------------------------------#
 
 .PHONY: all
-all	:	$(STCSDIR)/$(NAME) ## make signal.a
+all	:	$(STCSDIR)/$(NAME) ## make utils.a
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
