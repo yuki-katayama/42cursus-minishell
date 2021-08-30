@@ -33,7 +33,6 @@ int	main(int argc, char **test)
 	t_node	*node;
 	t_env	*st_env;
 
-
 	env = environ;
 	(void)argc;
 	while (1)

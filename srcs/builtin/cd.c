@@ -7,6 +7,7 @@ int	ft_cd(char *str)
 	if (*str == '\0')
 	{
 		if (chdir(getenv("HOME")) != 0)
+
 			perror("cd HOME: ");
 	}
 	else
