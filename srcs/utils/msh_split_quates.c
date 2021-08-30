@@ -79,7 +79,7 @@ int	set_value(char *s, char c, char **words, bool *quatation)
 		{
 			words[j] = assign_res(s + i, c, quatation);
 			if (!(words[j++]))
-				return ((int)ft_free_char(words, (int)i));
+				return (*(int *)ft_free_char(words, i));
 		}
 		while (s[++i] && !(check_if_sep(s[i], c, quatation)))
 			;

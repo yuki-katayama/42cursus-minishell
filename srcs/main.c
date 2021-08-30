@@ -47,7 +47,7 @@ int	main(int argc, char **test)
 		if (argv == NULL)
 			ft_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
-		node = nodalize(strdup("echo a > test"));
+		node = nodalize(argv);
 		st_env = init_env(env);
 		multi_level_pipe(node, st_env);
 		// select = select_buildin(argv);
