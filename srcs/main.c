@@ -34,6 +34,7 @@ int	main(int argc, char **test)
 	t_env	*st_env;
 
 	env = environ;
+	st_env = init_env(env);
 	(void)argc;
 	while (1)
 	{
@@ -48,7 +49,6 @@ int	main(int argc, char **test)
 			ft_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
 		node = nodalize(argv);
-		st_env = init_env(env);
 		multi_level_pipe(node, st_env);
 		// select = select_buildin(argv);
 		// if (select == 1)
