@@ -89,6 +89,9 @@ SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
 CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
+ifdef DEBUG
+	CFLAGS	:= -I $(shell brew --prefix readline)/include -g
+endif
 
 LDFLAGS = -lreadline -lhistory -L$(shell brew --prefix readline)/lib
 
@@ -185,7 +188,10 @@ fclean	:	clean ## Remove object and static
 .PHONY: re
 re	:	fclean all ## Retry cmpiles
 
-norm:
+debug: clean ## Compile nothing -W flg
+		@$(MAKE) --debug DEBUG=1
+
+norm: ## Run norm
 	@printf "\e[31m"; norminette $(SRCDIR) $(INCLUDES) $(LIBDIR) \
     | grep -v -e ": OK!" -v -e "Missing or invalid header. Header are being reintroduced as a mandatory part of your files. This is not yet an error." \
     && exit 1 \

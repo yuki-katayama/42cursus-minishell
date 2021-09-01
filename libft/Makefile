@@ -66,7 +66,6 @@ SRCNAME	?=	ft_malloc_p.c \
 			ft_strlen.c \
 			ft_spaceskip.c \
 			ft_strncmp.c \
-			ft_strcmp.c \
 			ft_putchar_fd.c \
 			ft_putendl_fd.c \
 			ft_putstr_fd.c \

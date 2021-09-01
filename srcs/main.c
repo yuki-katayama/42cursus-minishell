@@ -12,7 +12,7 @@ static bool	is_builtin(char *argv, char *cmd, char *cmd_sp)
 	if (!argv)
 		return (false);
 	if ((ft_strncmp(argv, cmd_sp, ft_strlen(cmd_sp)) == 0) \
-			|| ft_strcmp(argv, cmd) == 0)
+			|| ft_strncmp(argv, cmd, ft_strlen(cmd) + 1) == 0)
 		return (true);
 	return (false);
 }
@@ -26,7 +26,9 @@ static int	run_builtin(char *argv, t_env *env)
 	else if (is_builtin(argv, "pwd", "pwd "))
 		return (bi_pwd());
 	else if (is_builtin(argv, "export", "export "))
-		return (bi_export(argv + ft_strlen("export"), env));
+		return (bi_export(msh_split_quates(argv, ' '), env));
+	else if (is_builtin(argv, "unset", "unset "))
+		return (bi_unset(msh_split_quates(argv, ' '), env));
 	return (1);
 }
 

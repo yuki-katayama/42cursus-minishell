@@ -65,7 +65,8 @@ SRCNAME	?=	exit \
 			ctrl_d \
 			cd \
 			pwd \
-			export
+			export \
+			unset
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 

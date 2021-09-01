@@ -50,9 +50,9 @@ int	is_replace_or_add(char *key, t_env *env)
 	tmp = env;
 	while (tmp)
 	{
-		if (!(ft_strcmp(key, tmp->key)))
+		if (!(ft_strncmp(key, tmp->key, ft_strlen(key) + 1)))
 		{
-			if (ft_strcmp(key, tmp->value))
+			if (ft_strncmp(key, tmp->value, ft_strlen(key) + 1))
 				return (2);
 			return (0);
 		}
@@ -61,7 +61,7 @@ int	is_replace_or_add(char *key, t_env *env)
 	return (1);
 }
 
-int	bi_export(char *argv, t_env *env)
+int	bi_export(char **argv, t_env *env)
 {
 	t_env	*add;
 	t_env	*mem;
@@ -69,32 +69,31 @@ int	bi_export(char *argv, t_env *env)
 	char	*value;
 	int		set_mode;
 
-	argv = ft_spaceskip(argv);
-	argv = ft_chardel(argv, "\"'");
-	set_key_value(argv, &key, &value);
-	set_mode = is_replace_or_add(key, env);
-	if (set_mode)
+	while (++argv && *argv)
 	{
-		if (set_mode == 1)
+		*argv = ft_chardel(*argv, "\"'");
+		set_key_value(*argv, &key, &value);
+		set_mode = is_replace_or_add(key, env);
+		if (set_mode)
 		{
-			if (!(ft_malloc_p((void **)&add, sizeof(t_env))))
-				return (0);
-			add->key = key;
-			add->value = value;
-			get_last_env(env)->next = add;
-			add->next = NULL;
+			if (set_mode == 1)
+			{
+				if (!(ft_malloc_p((void **)&add, sizeof(t_env))))
+					return (0);
+				add->key = ft_strdup(key);
+				add->value = ft_strdup(value);
+				get_last_env(env)->next = add;
+				add->next = NULL;
+			}
+			else if (set_mode == 2)
+				get_key_env(key, env)->value = value;
 		}
-		else if (set_mode == 2)
-			get_key_env(key, env)->value = value;
 	}
-	return (0);
-}
-
-/*
 	mem = env;
 	while (mem)
 	{
 		printf("%s : %s\n", mem->key, mem->value);
 		mem = mem->next;
 	}
-*/
+	return (0);
+}

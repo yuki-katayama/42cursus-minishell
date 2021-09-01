@@ -15,7 +15,7 @@ int	here_doc(char *str, int read, t_env *env)
 	while (1)
 	{
 		line = readline("> ");
-		if (!ft_strcmp(str, line))
+		if (!ft_strncmp(str, line, ft_strlen(str) + 1))
 			break ;
 		if (line)
 			ft_putendl_fd(expand_env_helper(line, 0, env), pipe_fd[WRITE]);

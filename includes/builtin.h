@@ -29,6 +29,9 @@ int					bi_cd(char *str);
 int					bi_pwd(void);
 
 // export
-int					bi_export(char *argv, t_env *env);
+int	bi_export(char **argv, t_env *env);
+
+// unset
+int bi_unset(char **key, t_env *env);
 
 #endif
