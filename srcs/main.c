@@ -29,6 +29,8 @@ static int	run_builtin(char *argv, t_env *env)
 		return (bi_export(msh_split_quates(argv, ' '), env));
 	else if (is_builtin(argv, "unset", "unset "))
 		return (bi_unset(msh_split_quates(argv, ' '), env));
+	else if (is_builtin(argv, "env", "env "))
+		return (bi_env(env));
 	return (1);
 }
 

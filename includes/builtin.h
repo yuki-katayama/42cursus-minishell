@@ -34,4 +34,6 @@ int	bi_export(char **argv, t_env *env);
 // unset
 int bi_unset(char **key, t_env *env);
 
+// env
+int bi_env(t_env *env);
 #endif

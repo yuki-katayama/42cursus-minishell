@@ -9,11 +9,5 @@ int bi_unset(char **key, t_env *env)
 
 	while(++key && *key)
 		env = msh_del_env(*key, env);
-	mem = env;
-	while (mem)
-	{
-		printf("%s : %s\n", mem->key, mem->value);
-		mem = mem->next;
-	}
 	return (0);
 }

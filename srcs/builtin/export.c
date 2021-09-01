@@ -64,7 +64,6 @@ int	is_replace_or_add(char *key, t_env *env)
 int	bi_export(char **argv, t_env *env)
 {
 	t_env	*add;
-	t_env	*mem;
 	char	*key;
 	char	*value;
 	int		set_mode;
@@ -88,12 +87,6 @@ int	bi_export(char **argv, t_env *env)
 			else if (set_mode == 2)
 				get_key_env(key, env)->value = value;
 		}
-	}
-	mem = env;
-	while (mem)
-	{
-		printf("%s : %s\n", mem->key, mem->value);
-		mem = mem->next;
 	}
 	return (0);
 }
