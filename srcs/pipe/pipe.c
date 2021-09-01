@@ -7,6 +7,8 @@
 
 char	*msh_get_env(char *key, t_env *env)
 {
+	if (!*key)
+		return ("$");
 	while (env)
 	{
 		if (!ft_strcmp(key, env->key))

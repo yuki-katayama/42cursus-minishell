@@ -6,18 +6,14 @@
 static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
 {
 	int		c;
-	char	*stoper;
+	const char	*stoper = "QWERTYUIOPASDFGHJKLZXCVBNM_qwertyuiopasdfghjklzxcvbnm";
 
-	stoper = "\"'$";
 	*start = ++*str;
-	while (**str && !ft_strchr(stoper, **str))
+	while (**str && ft_strchr(stoper, **str))
 		++*str;
 	c = **str;
 	**str = '\0';
-	if (!**start)
-		*start = "$";
-	else
-		*start = msh_get_env(*start, env);
+	*start = msh_get_env(*start, env);
 	*len = ft_strlen(*start);
 	**str = c;
 }
