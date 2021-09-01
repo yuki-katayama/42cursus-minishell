@@ -19,7 +19,7 @@ bool	ft_isdigitstr(char *str);
 char	*ft_charskip(const char *str, char skip);
 void	*ft_free_char(char **word, int index);
 int		ft_arraylen(char **array);
-char	*ft_chardel(char *str, char c);
+char	*ft_chardel(char *str, char *c);
 char	*ft_untilskip(char *str, char c);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *src);

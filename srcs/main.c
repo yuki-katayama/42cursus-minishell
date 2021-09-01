@@ -7,56 +7,78 @@
 #include "../includes/utils.h"
 #include "../libft/libft.h"
 
-int select_buildin(char *argv)
+static bool	is_builtin(char *argv, char *cmd, char *cmd_sp)
 {
-	if ((ft_strncmp(argv, \
-						"exit ", ft_strlen("exit ")) == 0) \
-		|| ft_strcmp(argv, "exit") == 0)
-			return (1);
-	else if ((ft_strncmp(argv,
-						"cd ", ft_strlen("cd ")) == 0)
-		|| (ft_strcmp(argv, "cd") == 0))
-			return (2);
-	else if ((ft_strncmp(argv,
-						"pwd ", ft_strlen("pwd ")) == 0)
-		|| (ft_strcmp(argv, "pwd") == 0))
-			return (3);
-	return (0);
+	if (!argv)
+		return (false);
+	if ((ft_strncmp(argv, cmd_sp, ft_strlen(cmd_sp)) == 0) \
+			|| ft_strcmp(argv, cmd) == 0)
+		return (true);
+	return (false);
 }
 
-int	main(int argc, char **test)
+static int	run_builtin(char *argv, t_env *env)
 {
-	extern char **environ;
-	char	**env;
-	char	*argv;
-	// uint8_t select;
-	t_node	*node;
-	t_env	*st_env;
+	if (is_builtin(argv, "exit", "exit "))
+		bi_exit(argv + ft_strlen("exit"));
+	else if (is_builtin(argv, "cd", "cd "))
+		return (bi_cd(argv + ft_strlen("cd")));
+	else if (is_builtin(argv, "pwd", "pwd "))
+		return (bi_pwd());
+	else if (is_builtin(argv, "export", "export "))
+		return (bi_export(argv + ft_strlen("export"), env));
+	return (1);
+}
 
-	env = environ;
-	(void)argc;
+static t_env	*init_env(char **envp)
+{
+	t_env	*head;
+	t_env	**cur;
+	char	*str;
+
+	head = NULL;
+	cur = &head;
+	while (*envp)
+	{
+		if (!(ft_malloc_p((void **)&*cur, sizeof(t_env))))
+			return (NULL);
+		str = *envp;
+		while (*str && *str != '=')
+			++str;
+		*str = '\0';
+		**cur = (t_env)
+		{
+			.key = ft_strdup(*envp++),
+			.value = ft_strdup(++str)
+		};
+		cur = &(*cur)->next;
+	}
+	return (head);
+}
+
+int	main(void)
+{
+	extern char	**environ;
+	char		*argv;
+	t_node		*node;
+	t_env		*st_env;
+	char		**pipe_split;
+
+	st_env = init_env(environ);
 	while (1)
 	{
 		ft_signal();
-		if (TEST)
-			argv = test[2];
-		else
-			argv = readline("minishell$ ");
+		argv = readline("minishell$ ");
 		if (argv && ft_strlen(argv) > 0)
 			add_history(argv);
 		if (argv == NULL)
-			ft_ctrl_d("minishell$ exit");
+			bi_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
-		node = nodalize(argv);
-		st_env = init_env(env);
+		node = nodalize(ft_strdup(argv));
 		multi_level_pipe(node, st_env);
-		// select = select_buildin(argv);
-		// if (select == 1)
-		// 	ft_exit(argv + ft_strlen("exit"));
-		// else if (select == 2)
-		// 	ft_cd(argv + ft_strlen("cd"));
-		// else if (select == 3)
-		// 	ft_pwd();
+		pipe_split = ft_split(argv, '|');
+		if (ft_arraylen(pipe_split) != 0)
+			run_builtin(pipe_split[ft_arraylen(pipe_split) - 1], st_env);
 		free(argv);
 	}
 	return (0);

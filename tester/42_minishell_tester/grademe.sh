@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 # User settings
 # ------------------------------------------------------------------------------
-readonly MINISHELL_DIR="../../minishell"
+readonly MINISHELL_DIR="../.."
 readonly MINISHELL_EXE="minishell"
 # If you launch this script with -c option, MINISHELL_PROMPT is ignored
 readonly MINISHELL_PROMPT="minishell $ "
@@ -94,5 +94,5 @@ output_log () {
 }
 
 make re -C ../..
-cp ../minishell .
+cp ../../minishell .
 main $@

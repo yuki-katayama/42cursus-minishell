@@ -16,8 +16,7 @@ static int	arraylen_one(char *str)
 	if (*str == '\0')
 		return (0);
 	str = ft_spaceskip(str);
-	mem = ft_chardel(mem, '"');
-	mem = ft_chardel(mem, '\'');
+	mem = ft_chardel(mem, "\"'");
 	if (ft_isdigitstr(str))
 	{
 		status = (uint8_t)exit_atoi(str, &err_flg);
@@ -45,14 +44,14 @@ void	arraylen_under_three(char **splited)
 	}
 }
 
-void	ft_exit(char *str)
+int	bi_exit(char *str)
 {
 	char	**splited;
 	int		len;
 
-	if (TEST)
-		ft_putendl_fd("exit", STDERR_FILENO);
 	splited = msh_split_quates(str, ' ');
+	if (splited == NULL)
+		exit(0);
 	len = ft_arraylen(splited);
 	if (len < 3)
 		arraylen_under_three(splited);
@@ -63,7 +62,5 @@ void	ft_exit(char *str)
 	}
 	exit_too_many_argument_error();
 	errno = 1;
-	if (TEST)
-		exit(1);
-	return ((void) NULL);
+	return (0);
 }

@@ -7,12 +7,13 @@
 # include <limits.h> // LLONG_ PATH_MAX
 # include <errno.h> //errno
 # include <stdbool.h> //bool
+# include "./pipe.h" //t_env
 
 // ctrl_d
-void				ft_ctrl_d(char *str);
+void				bi_ctrl_d(char *str);
 
 //exit
-void				ft_exit(char *str);
+int					bi_exit(char *str);
 
 // exit_utils
 bool				check_hypen(char **splited);
@@ -22,9 +23,12 @@ char				*skip_option_flg(char *str);
 unsigned long int	exit_atoi(const char *str, bool *err_flg);
 
 // cd
-int					ft_cd(char *str);
+int					bi_cd(char *str);
 
 // pwd
-void				ft_pwd(void);
+int					bi_pwd(void);
+
+// export
+int					bi_export(char *argv, t_env *env);
 
 #endif

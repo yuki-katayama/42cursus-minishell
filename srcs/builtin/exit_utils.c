@@ -3,10 +3,8 @@
 
 char	*skip_or_delete(char *str)
 {
-	if (*str == '"')
-		str = ft_chardel(str, '"');
-	else if (*str == '\'')
-		str = ft_chardel(str, '\'');
+	if (*str == '"' || *str == '\'')
+		str = ft_chardel(str, "\"'");
 	else if (*str == '#')
 		str = ft_charskip(str, '#');
 	return (str);

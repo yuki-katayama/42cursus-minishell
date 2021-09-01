@@ -3,7 +3,7 @@
 
 typedef struct s_token	t_token;
 typedef struct s_node	t_node;
-typedef enum e_kind	t_kind;
+typedef enum e_kind		t_kind;
 typedef enum e_status	t_status;
 
 enum e_status

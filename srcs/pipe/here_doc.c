@@ -1,14 +1,12 @@
 #include "../../includes/pipe.h"
 #include "../../includes/expansion.h"
-
-
 #include "../../libft/libft.h"
 
 int	here_doc(char *str, int read, t_env *env)
 {
-	int	pipe_fd[PIPE];
-	int	tmp_fd;
-	char *line;
+	int		pipe_fd[PIPE];
+	int		tmp_fd;
+	char	*line;
 
 	line = NULL;
 	tmp_fd = dup(READ);

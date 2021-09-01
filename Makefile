@@ -55,10 +55,11 @@ endif
 
 #-----------SET DIRECTORY--------#
 SRCDIR	?= ./srcs
-INCDIR	?= -L./includes main.h
+LIBDIR	?= ./libft
 OBJDIR	?= ./objs
 DPSDIR	?= ./dps
 STCSDIR ?= ./stcs
+
 
 #-------------SET STCS VARIABLES----------#
 STCS_LIBFT	?= libft
@@ -121,7 +122,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 .PHONY: $(STCS_LIBFT)
 $(STCS_LIBFT): |  dir
-	@$(MAKE) -C ./libft/.
+	@$(MAKE) -C $(LIBDIR)/.
 
 .PHONY: $(STCS_SIGNAL)
 $(STCS_SIGNAL):
@@ -152,8 +153,8 @@ $(STCS_EXPANSION):
 	@$(MAKE) -C $(SRCDIR)/$(STCS_EXPANSION)/.
 
 $(NAME):	$(OBJS)
+			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) $(LIBDIR)/libft.a $(STCS) -o $(NAME)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled$(ESC_DEFAULT). 👍\n"
-			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) libft/libft.a $(STCS) -o $(NAME)
 
 .PHONY: dir
 dir :
@@ -163,26 +164,32 @@ dir :
 
 .PHONY: san
 san	:	${OBJS} ## Run sanitize using addres
-			@$(MAKE) -s -C libft/.
-			@$(CC) $(OBJS) $(SANFLAGS1) $(CFLAGS) $(LDFLAGS) libft/libft.a -o $(NAME)
+			@$(MAKE) -s -C $(LIBDIR)
+			@$(CC) $(OBJS) $(SANFLAGS) $(CFLAGS) $(LDFLAGS) $(LIBDIR)/libft.a $(STCS) -o $(NAME)
 
 .PHONY: clean
 clean	: ## Remove object
 			@echo "$(ESC_CLEAR_SCREEN)"
 			@$(RM) $(OBJDIR)
 			@$(RM) $(DPSDIR)
-			@$(MAKE) clean -s -C ./libft
+			@$(MAKE) clean -s -C $(LIBDIR)
 			@echo "$(ESC_RED)${NAME}: '"$(OBJDIR)"' '"$(DPSDIR)"' has been deleted.$(ESC_DEFAULT)🗑️"
 
 .PHONY: fclean
 fclean	:	clean ## Remove object and static
-			@$(MAKE) fclean -s -C ./libft
+			@$(MAKE) fclean -s -C $(LIBDIR)
 			@$(RM) $(STCSDIR)
 			@$(RM) $(NAME)
 			@echo "$(ESC_RED)${NAME}: '"$(NAME)"' '"$(STCSDIR)"' has been deleted. $(ESC_DEFAULT)🗑️"
 
 .PHONY: re
 re	:	fclean all ## Retry cmpiles
+
+norm:
+	@printf "\e[31m"; norminette $(SRCDIR) $(INCLUDES) $(LIBDIR) \
+    | grep -v -e ": OK!" -v -e "Missing or invalid header. Header are being reintroduced as a mandatory part of your files. This is not yet an error." \
+    && exit 1 \
+    || printf "\e[32m%s\n\e[m" "Norm OK!"; printf "\e[m"
 
 .PHONY: help
 help	: ## Display this help
