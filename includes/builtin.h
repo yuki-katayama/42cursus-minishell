@@ -36,4 +36,7 @@ int bi_unset(char **key, t_env *env);
 
 // env
 int bi_env(t_env *env);
+
+// echo
+int bi_echo(char **splited, t_env *env);
 #endif

@@ -188,7 +188,7 @@ fclean	:	clean ## Remove object and static
 .PHONY: re
 re	:	fclean all ## Retry cmpiles
 
-debug: clean ## Compile nothing -W flg
+debug: ## Compile nothing -W flg
 		@$(MAKE) --debug DEBUG=1
 
 norm: ## Run norm

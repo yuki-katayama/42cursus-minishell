@@ -5,6 +5,7 @@
 #include "../includes/lexer.h"
 #include "../includes/pipe.h"
 #include "../includes/utils.h"
+#include "../includes/expansion.h"
 #include "../libft/libft.h"
 
 static bool	is_builtin(char *argv, char *cmd, char *cmd_sp)
@@ -31,6 +32,8 @@ static int	run_builtin(char *argv, t_env *env)
 		return (bi_unset(msh_split_quates(argv, ' '), env));
 	else if (is_builtin(argv, "env", "env "))
 		return (bi_env(env));
+	else if (is_builtin(argv, "echo", "echo "))
+		return (bi_echo(msh_split_quates(argv, ' '), env));
 	return (1);
 }
 
@@ -77,6 +80,7 @@ int	main(void)
 			add_history(argv);
 		if (argv == NULL)
 			bi_ctrl_d("minishell$ exit");
+		// printf("%s",expand_env_helper("$HOME", 0, st_env));
 		argv = ft_spaceskip(argv);
 		node = nodalize(ft_strdup(argv));
 		multi_level_pipe(node, st_env);

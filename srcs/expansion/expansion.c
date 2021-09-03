@@ -5,7 +5,7 @@
 
 static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
 {
-	int		c;
+	char		c;
 	char	*stoper;
 
 	stoper = "\"'$";
@@ -14,6 +14,7 @@ static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
 		++*str;
 	c = **str;
 	**str = '\0';
+	write(1, "a", 1);
 	if (!**start)
 		*start = "$";
 	else
