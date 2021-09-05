@@ -25,9 +25,9 @@ t_token *tokenize_helper(char **str, t_kind kind, size_t group)
 				if(!(ft_malloc_p((void **)&*cur, sizeof(t_token))))
 					return (NULL);
 				if (**str == '\'')
-					*str = ft_untilskip(start = *str + 2, '\''), (*cur)->status = ST_SQ;
+					*str = ft_untilskip(start = ++*str, '\''), (*cur)->status = ST_SQ;
                 else if (**str == '"')
-					*str = ft_untilskip(start = *str + 2, '"'), (*cur)->status = ST_DQ;
+					*str = ft_untilskip(start = ++*str, '"'), (*cur)->status = ST_DQ;
 				else
 				{
 						start = *str;
