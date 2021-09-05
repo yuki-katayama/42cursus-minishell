@@ -1,6 +1,8 @@
 #include "../../includes/pipe.h"
 #include "../../includes/builtin.h"
 #include "../../includes/utils.h"
+#include "../../includes/lexer.h"
+#include "../../includes/expansion.h"
 
 #include "../../libft/libft.h"
 
@@ -19,6 +21,5 @@ int bi_echo(char **splited, t_env *env)
 	}
 	free(*splited);
 	ft_putchar_fd('\n', STDOUT_FILENO);
-	// free(splited - 1);
 	return (0);
 }

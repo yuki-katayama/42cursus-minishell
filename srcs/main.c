@@ -80,7 +80,6 @@ int	main(void)
 			add_history(argv);
 		if (argv == NULL)
 			bi_ctrl_d("minishell$ exit");
-		// printf("%s",expand_env_helper("$HOME", 0, st_env));
 		argv = ft_spaceskip(argv);
 		node = nodalize(ft_strdup(argv));
 		multi_level_pipe(node, st_env);

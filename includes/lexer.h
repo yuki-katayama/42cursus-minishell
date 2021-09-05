@@ -40,5 +40,6 @@ struct s_node
 };
 
 t_node	*nodalize(char *str);
+t_token	*tokenize_helper(char **str, t_kind kind, size_t group);
 
 #endif
