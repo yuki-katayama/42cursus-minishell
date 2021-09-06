@@ -14,12 +14,12 @@ char	*msh_get_env(char *key, t_env *env)
 
 t_env	*msh_del_env(char *key, t_env *env)
 {
-	t_env *cur;
-	t_env *prev;
+	t_env	*cur;
+	t_env	*prev;
 
 	prev = NULL;
 	cur = env;
-	while(cur)
+	while (cur)
 	{
 		if (ft_strncmp(key, cur->key, ft_strlen(key) + 1) == 0)
 		{
@@ -28,7 +28,7 @@ t_env	*msh_del_env(char *key, t_env *env)
 			else
 				env = cur->next;
 			cur = NULL;
-			break;
+			break ;
 		}
 		prev = cur;
 		cur = cur->next;

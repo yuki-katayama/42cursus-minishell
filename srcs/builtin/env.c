@@ -1,12 +1,12 @@
 #include "../../includes/pipe.h"
 #include "../../libft/libft.h"
 
-int bi_env(t_env *env)
+int	bi_env(t_env *env)
 {
-	t_env *cur;
+	t_env	*cur;
 
 	cur = env;
-	while(cur)
+	while (cur)
 	{
 		ft_putstr_fd(cur->key, STDOUT_FILENO);
 		ft_putchar_fd('=', STDOUT_FILENO);

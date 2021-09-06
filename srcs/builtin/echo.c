@@ -6,7 +6,7 @@
 
 #include "../../libft/libft.h"
 
-int bi_echo(char **splited, t_env *env)
+int	bi_echo(char **splited, t_env *env)
 {
 	(void)env;
 	splited++;

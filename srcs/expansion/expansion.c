@@ -5,7 +5,7 @@
 
 static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
 {
-	char		c;
+	char	c;
 	char	*stoper;
 
 	stoper = "\"'$";

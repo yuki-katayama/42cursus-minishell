@@ -3,7 +3,7 @@
 #include "../../libft/libft.h"
 #include "../../includes/utils.h"
 
-t_env	*get_last_env(t_env *env)
+static t_env	*get_last_env(t_env *env)
 {
 	t_env	*last;
 
@@ -15,7 +15,7 @@ t_env	*get_last_env(t_env *env)
 	return (last);
 }
 
-t_env	*get_key_env(char *key, t_env *env)
+static t_env	*get_key_env(char *key, t_env *env)
 {
 	t_env	*env_key;
 
@@ -31,19 +31,13 @@ t_env	*get_key_env(char *key, t_env *env)
 	return (env_key);
 }
 
-void	set_key_value(char *argv, char **key, char **value)
-{
-	*key = msh_substr(argv, ft_strchr(argv, '='));
-	*value = msh_substr(ft_strchr(argv, '=') + 1, argv + ft_strlen(argv));
-}
-
 /*
 ** description:
 **	keyが存在し、valueに変更があれば、return 2
 **	keyが存在し、valueに変更がなければ、return 0
 **	keyが存在しなければ、return 1
 */
-int	is_replace_or_add(char *key, t_env *env)
+static int	is_replace_or_add(char *key, t_env *env)
 {
 	t_env	*tmp;
 
@@ -61,31 +55,41 @@ int	is_replace_or_add(char *key, t_env *env)
 	return (1);
 }
 
-int	bi_export(char **argv, t_env *env)
+void	set_env(int set_mode, t_env *env, char *key, char *value)
 {
 	t_env	*add;
+
+	if (set_mode == 1)
+	{
+		if (!(ft_malloc_p((void **)&add, sizeof(t_env))))
+			return ;
+		add->key = ft_strdup(key);
+		add->value = ft_strdup(value);
+		get_last_env(env)->next = add;
+		add->next = NULL;
+	}
+	else if (set_mode == 2)
+		get_key_env(key, env)->value = value;
+}
+
+int	bi_export(char **argv, t_env *env)
+{
 	char	*key;
 	char	*value;
 	int		set_mode;
 
+	if (!ft_strchr(*argv, '='))
+		return (1);
 	while (++argv && *argv)
 	{
 		*argv = ft_chardel(*argv, "\"'");
-		set_key_value(*argv, &key, &value);
+		key = msh_substr(*argv, ft_strchr(*argv, '='));
+		value = msh_substr(ft_strchr(*argv, '=') + 1, \
+							(*argv + ft_strlen(*argv)));
 		set_mode = is_replace_or_add(key, env);
 		if (set_mode)
 		{
-			if (set_mode == 1)
-			{
-				if (!(ft_malloc_p((void **)&add, sizeof(t_env))))
-					return (0);
-				add->key = ft_strdup(key);
-				add->value = ft_strdup(value);
-				get_last_env(env)->next = add;
-				add->next = NULL;
-			}
-			else if (set_mode == 2)
-				get_key_env(key, env)->value = value;
+			set_env(set_mode, env, key, value);
 		}
 	}
 	return (0);
