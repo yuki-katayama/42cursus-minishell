@@ -81,7 +81,7 @@ int	main(void)
 		if (argv == NULL)
 			bi_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
-		node = nodalize(ft_strdup(argv));
+		node = nodalize(argv);
 		multi_level_pipe(node, st_env);
 		pipe_split = ft_split(argv, '|');
 		if (ft_arraylen(pipe_split) != 0)

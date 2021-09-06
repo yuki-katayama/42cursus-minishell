@@ -15,12 +15,12 @@ void	set_status_and_proceed_str_start(\
 {
 	if (***str == '\'')
 	{
-		**str = ft_untilskip(*start = **str + 2, '\'');
+		**str = ft_untilskip(*start = ++**str, '\'');
 		(*cur)->status = ST_SQ;
 	}
 	else if (***str == '"')
 	{
-		**str = ft_untilskip(*start = **str + 2, '"');
+		**str = ft_untilskip(*start = ++**str, '"');
 		(*cur)->status = ST_DQ;
 	}
 	else
