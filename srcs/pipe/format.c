@@ -26,7 +26,7 @@ char	**format_command(t_token *token, size_t idx)
 
 	if (!token)
 	{
-		if(!(ft_malloc_pp((void ***)&ret, sizeof(char **) * (idx + 1))))
+		if (!(ft_malloc_pp((void ***)&ret, sizeof(char **) * (idx + 1))))
 			return (NULL);
 		if (ret)
 			ret[idx] = NULL;

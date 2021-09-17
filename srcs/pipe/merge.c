@@ -3,8 +3,10 @@
 
 static int	is_marge(t_token *cur, t_token *next)
 {
-	return (cur->group == next->group && !(cur->status == ST_SP && next->status == ST_SP));
+	return (cur->group == next->group \
+			&& !(cur->status == ST_SP && next->status == ST_SP));
 }
+
 //aaa"bbb"
 static void	marge_token_helper(t_token **token)
 {

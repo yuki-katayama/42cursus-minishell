@@ -7,7 +7,6 @@
 # include <sys/stat.h> // stat
 # include <stdlib.h> // free
 # include "lexer.h"
-
 # include <readline/readline.h> //readline
 
 enum e_pipe
@@ -17,7 +16,7 @@ enum e_pipe
 	PIPE
 };
 
-typedef struct s_env t_env;
+typedef struct s_env	t_env;
 
 struct s_env
 {
@@ -27,7 +26,6 @@ struct s_env
 };
 
 //pipe
-t_env	*init_env(char **envp);
 void	multi_level_pipe(t_node *node, t_env *env);
 char	*msh_get_env(char *key, t_env *env);
 
@@ -35,8 +33,8 @@ char	*msh_get_env(char *key, t_env *env);
 int		here_doc(char *str, int read, t_env *env);
 
 //open_io
-int	open_output(t_token *token);
-int	open_input(t_token *token, int read_fd, t_env *env);
+int		open_output(t_token *token);
+int		open_input(t_token *token, int read_fd, t_env *env);
 
 //format
 char	*format_path(char *cmd, char **path);

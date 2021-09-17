@@ -1,4 +1,4 @@
-mkdir dir; cd dir; pwd
+cd dir; pwd
 mkdir dir; cd dir; cd .; pwd
 mkdir dir; cd dir; cd ./; pwd
 mkdir dir; cd dir; cd ..; pwd
