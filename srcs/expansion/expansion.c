@@ -3,21 +3,25 @@
 #include "../../includes/utils.h"
 #include "../../libft/libft.h"
 
+static int is_env_ch(char c)
+{
+	return (c != '\0' && \
+			(c == '_' || \
+			(c >= '0' && c <= '9') || \
+			(c >= 'a' && c <= 'z') || \
+			(c >= 'A' && c <= 'Z')));
+}
+
 static void	start_with_dollar(char **str, char **start, t_env *env, size_t *len)
 {
-	char	c;
-	char	*stoper;
+	int		c;
 
-	stoper = "\"'$";
 	*start = ++*str;
-	while (**str && !ft_strchr(stoper, **str))
+	while (is_env_ch(**str))
 		++*str;
 	c = **str;
 	**str = '\0';
-	if (!**start)
-		*start = "$";
-	else
-		*start = msh_get_env(*start, env);
+	*start = msh_get_env(*start, env);
 	*len = ft_strlen(*start);
 	**str = c;
 }
