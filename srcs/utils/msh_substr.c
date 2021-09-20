@@ -7,8 +7,6 @@ char	*msh_substr(char *start, char *end)
 	size_t	idx;
 
 	if (!(ft_malloc_p((void **)&ret, sizeof(char *) * (end - start + 1))))
-		return (NULL);
-	if (!ret)
 		exit(1);
 	idx = 0;
 	while (start != end)

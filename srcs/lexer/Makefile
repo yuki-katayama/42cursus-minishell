@@ -89,8 +89,8 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 -include $(DPS)
 
 $(STCSDIR)/$(NAME):	$(OBJS)
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
 			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
 			@rm -rf ../../minishell
 
 fclean:

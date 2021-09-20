@@ -5,7 +5,7 @@ static char	*sub_split(const char *start, const char *end)
 	char	*ret;
 	size_t	idx;
 
-	if(!(ft_malloc_p((void **)&ret, sizeof(char *) * (end - start + 1))))
+	if (!(ft_malloc_p((void **)&ret, sizeof(char *) * (end - start + 1))))
 		return (NULL);
 	if (!ret)
 		return (NULL);
@@ -25,7 +25,7 @@ static char	**rec_split(const char *str, const char c, size_t idx)
 		++str;
 	if (!*str)
 	{
-		if(!(ft_malloc_p((void **)&ret, sizeof(char *) * (idx + 1))))
+		if (!(ft_malloc_p((void **)&ret, sizeof(char *) * (idx + 1))))
 			return (NULL);
 		if (ret)
 			ret[idx] = NULL;

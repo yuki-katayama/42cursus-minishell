@@ -66,7 +66,6 @@ SRCNAME	?=	ft_malloc_p.c \
 			ft_strlen.c \
 			ft_spaceskip.c \
 			ft_strncmp.c \
-			ft_strcmp.c \
 			ft_putchar_fd.c \
 			ft_putendl_fd.c \
 			ft_putstr_fd.c \
@@ -111,8 +110,8 @@ $(OBJDIR)/%.o: $(SRCDIR)%.c
 -include $(DPS)
 
 $(NAME):	$(OBJS)
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)libft: All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
 			@ar	rcs	$(NAME)	$(OBJS)
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)libft: All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
 			@rm -rf ../minishell
 
 clean	: ## Remove object

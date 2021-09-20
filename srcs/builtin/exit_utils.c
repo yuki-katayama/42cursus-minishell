@@ -3,10 +3,8 @@
 
 char	*skip_or_delete(char *str)
 {
-	if (*str == '"')
-		str = ft_chardel(str, '"');
-	else if (*str == '\'')
-		str = ft_chardel(str, '\'');
+	if (*str == '"' || *str == '\'')
+		str = ft_chardel(str, "\"'");
 	else if (*str == '#')
 		str = ft_charskip(str, '#');
 	return (str);
@@ -21,14 +19,14 @@ bool	check_sharp(char **splited)
 
 bool	check_hypen(char **splited)
 {
-	if (ft_strcmp(skip_or_delete(*splited), "--") == 0)
+	if (ft_strncmp(skip_or_delete(*splited), "--", ft_strlen("--")) == 0)
 		return (true);
 	return (false);
 }
 
 char	*skip_option_flg(char *str)
 {
-	if (!(ft_strcmp(str, "--")))
+	if (!(ft_strncmp(str, "--", ft_strlen(str))))
 		str += 2;
 	return (str);
 }
