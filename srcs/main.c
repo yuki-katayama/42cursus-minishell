@@ -8,40 +8,11 @@
 #include "../includes/expansion.h"
 #include "../libft/libft.h"
 
-static bool	is_builtin(char *argv, char *cmd, char *cmd_sp)
+static t_env *init_env(char **envp)
 {
-	if (!argv)
-		return (false);
-	if ((ft_strncmp(argv, cmd_sp, ft_strlen(cmd_sp)) == 0) \
-			|| ft_strncmp(argv, cmd, ft_strlen(cmd) + 1) == 0)
-		return (true);
-	return (false);
-}
-
-static int	run_builtin(char *argv, t_env *env)
-{
-	if (is_builtin(argv, "exit", "exit "))
-		bi_exit(argv + ft_strlen("exit"));
-	else if (is_builtin(argv, "cd", "cd "))
-		return (bi_cd(argv + ft_strlen("cd")));
-	else if (is_builtin(argv, "pwd", "pwd "))
-		return (bi_pwd());
-	else if (is_builtin(argv, "export", "export "))
-		return (bi_export(msh_split_quates(argv, ' '), env));
-	else if (is_builtin(argv, "unset", "unset "))
-		return (bi_unset(msh_split_quates(argv, ' '), env));
-	else if (is_builtin(argv, "env", "env "))
-		return (bi_env(env));
-	else if (is_builtin(argv, "echo", "echo "))
-		return (bi_echo(msh_split_quates(argv, ' '), env));
-	return (1);
-}
-
-static t_env	*init_env(char **envp)
-{
-	t_env	*head;
-	t_env	**cur;
-	char	*str;
+	t_env *head;
+	t_env **cur;
+	char *str;
 
 	head = NULL;
 	cur = &head;
@@ -53,25 +24,22 @@ static t_env	*init_env(char **envp)
 		while (*str && *str != '=')
 			++str;
 		*str = '\0';
-		**cur = (t_env)
-		{
+		**cur = (t_env){
 			.key = ft_strdup(*envp++),
-			.value = ft_strdup(++str)
-		};
+			.value = ft_strdup(++str)};
 		cur = &(*cur)->next;
 	}
 	return (head);
 }
 
-int	main(void)
+int main(void)
 {
-	extern char	**environ;
-	char		*argv;
-	t_node		*node;
-	t_env		*st_env;
-	char		**pipe_split;
+	extern char **environ;
+	char *argv;
+	t_node *node;
+	t_env *env;
 
-	st_env = init_env(environ);
+	env = init_env(environ);
 	while (1)
 	{
 		ft_signal();
@@ -81,11 +49,18 @@ int	main(void)
 		if (argv == NULL)
 			bi_ctrl_d("minishell$ exit");
 		argv = ft_spaceskip(argv);
-		node = nodalize(argv);
-		multi_level_pipe(node, st_env);
-		pipe_split = ft_split(argv, '|');
-		if (ft_arraylen(pipe_split) != 0)
-			run_builtin(pipe_split[ft_arraylen(pipe_split) - 1], st_env);
+		if (*argv != '\0')
+		{
+			node = nodalize(argv);
+			if (node->next != NULL)
+				multi_level_pipe(node, env);
+			else if (node && msh_is_bi(*format_command(node->cmd, 0)))
+			{
+				//ない環境変数が来たらアウト。
+				expand_env(&node->cmd, env);
+				msh_run_bi(format_command(node->cmd, 0), env, "adult");
+			}
+		}
 		free(argv);
 	}
 	return (0);

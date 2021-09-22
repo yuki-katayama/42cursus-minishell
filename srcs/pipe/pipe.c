@@ -2,6 +2,8 @@
 #include "../../includes/lexer.h"
 #include "../../includes/utils.h"
 #include "../../includes/expansion.h"
+#include "../../includes/builtin.h"
+
 #include "../../libft/libft.h"
 
 void	child_process(int *pipe_fd, t_node *node, \
@@ -52,8 +54,15 @@ void	multi_level_pipe(t_node *node, t_env *env)
 		{
 			child_process(pipe_fd, node, env, read_fd);
 			if (node->cmd)
-				execve(format_path(node->cmd->str, path), \
+			{
+				if (msh_is_bi(*format_command(node->cmd, 0)))
+					msh_run_bi(format_command(node->cmd, 0), env, "child");
+				else
+				{
+					execve(format_path(node->cmd->str, path), \
 						format_command(node->cmd, 0), NULL);
+				}
+			}
 		}
 		else
 			adult_process(pipe_fd, node);
