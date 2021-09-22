@@ -8,6 +8,13 @@
 #include "../includes/expansion.h"
 #include "../libft/libft.h"
 
+static void	bi_ctrl_d(char *str)
+{
+	ft_putstr_fd("\033[0A\n", STDERR_FILENO);
+	ft_putendl_fd(str, STDERR_FILENO);
+	exit(0);
+}
+
 static t_env *init_env(char **envp)
 {
 	t_env *head;
@@ -54,11 +61,11 @@ int main(void)
 			node = nodalize(argv);
 			if (node->next != NULL)
 				multi_level_pipe(node, env);
-			else if (node && msh_is_bi(*format_command(node->cmd, 0)))
+			else if (node && is_msh_bi(*format_command(node->cmd, 0)))
 			{
 				//ない環境変数が来たらアウト。
 				expand_env(&node->cmd, env);
-				msh_run_bi(format_command(node->cmd, 0), env, "adult");
+				run_msh_bi(format_command(node->cmd, 0), env, "adult");
 			}
 		}
 		free(argv);

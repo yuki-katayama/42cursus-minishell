@@ -1,7 +1,7 @@
 #include "../../includes/builtin.h"
 #include "../../libft/libft.h"
 
-int	bi_pwd(void)
+int	msh_pwd(void)
 {
 	char	path[PATH_MAX];
 

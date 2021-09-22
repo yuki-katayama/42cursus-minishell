@@ -60,15 +60,13 @@ DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?=	exit \
-			exit_utils \
-			ctrl_d \
-			cd \
-			pwd \
-			export \
-			unset \
-			env \
-			echo
+SRCNAME	?=	msh_exit \
+			msh_cd \
+			msh_pwd \
+			msh_export \
+			msh_unset \
+			msh_env \
+			msh_echo
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 

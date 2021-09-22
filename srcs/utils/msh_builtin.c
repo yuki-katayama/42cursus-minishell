@@ -2,7 +2,7 @@
 #include "../../includes/builtin.h"
 #include "../../libft/libft.h"
 
-bool msh_is_bi(char *cmd)
+bool is_msh_bi(char *cmd)
 {
 	if (ft_strncmp(cmd, "exit", ft_strlen("exit") + 1) == 0
 		|| ft_strncmp(cmd, "cd", ft_strlen("cd") + 1) == 0
@@ -15,7 +15,7 @@ bool msh_is_bi(char *cmd)
 	return (false);
 }
 
-int msh_run_bi(char **cmd_arg, t_env *env, char *process)
+int run_msh_bi(char **cmd_arg, t_env *env, char *process)
 {
 	char *cmd;
 	char **argv;
@@ -23,21 +23,21 @@ int msh_run_bi(char **cmd_arg, t_env *env, char *process)
 	cmd = cmd_arg[0];
 	argv = &cmd_arg[1];
 	if (ft_strncmp(cmd, "exit", ft_strlen("exit") + 1) == 0)
-		bi_exit(argv);
+		msh_exit(argv);
 	else if (ft_strncmp(cmd, "cd", ft_strlen("cd") + 1) == 0)
-		bi_cd(*argv);
+		msh_cd(*argv);
 	else if (ft_strncmp(cmd, "exit", ft_strlen("exit") + 1) == 0)
-		bi_pwd();
+		msh_pwd();
 	else if (ft_strncmp(cmd, "export", ft_strlen("export") + 1) == 0)
-		bi_export(argv, env);
+		msh_export(argv, env);
 	else if (ft_strncmp(cmd, "unset", ft_strlen("unset") + 1) == 0)
-		bi_unset(argv, env);
+		msh_unset(argv, env);
 	else if (ft_strncmp(cmd, "env", ft_strlen("env") + 1) == 0)
-		bi_env(env);
+		msh_env(env);
 	else if (ft_strncmp(cmd, "echo", ft_strlen("echo") + 1) == 0)
-		bi_echo(argv, env);
+		msh_echo(argv, env);
 	else if (ft_strncmp(cmd, "pwd", ft_strlen("pwd") + 1) == 0)
-		bi_pwd();
+		msh_pwd();
 	if (ft_strncmp(process, "child", ft_strlen("child") + 1) == 0)
 		exit(0);
 	return (0);

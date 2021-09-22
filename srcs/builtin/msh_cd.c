@@ -1,7 +1,7 @@
 #include "../../libft/libft.h"
 #include "../../includes/builtin.h"
 
-int	bi_cd(char *path)
+int	msh_cd(char *path)
 {
 	path = ft_spaceskip(path);
 	if (*path == '\0')
@@ -11,10 +11,10 @@ int	bi_cd(char *path)
 	}
 	else
 	{
-		bi_pwd();
+		msh_pwd();
 		if (chdir(path) != 0)
 			perror("cd: ");
-		bi_pwd();
+		msh_pwd();
 	}
 	return (0);
 }

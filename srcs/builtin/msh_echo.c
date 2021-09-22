@@ -6,7 +6,7 @@
 
 #include "../../libft/libft.h"
 
-int	bi_echo(char **argv, t_env *env)
+int	msh_echo(char **argv, t_env *env)
 {
 	(void)env;
 	while (*argv)

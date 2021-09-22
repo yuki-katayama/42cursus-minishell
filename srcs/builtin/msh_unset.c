@@ -2,7 +2,7 @@
 #include "../../includes/utils.h"
 #include "../../libft/libft.h"
 
-int	bi_unset(char **key, t_env *env)
+int	msh_unset(char **key, t_env *env)
 {
 	int		i;
 	t_env	*mem;

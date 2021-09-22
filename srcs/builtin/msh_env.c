@@ -1,7 +1,7 @@
 #include "../../includes/pipe.h"
 #include "../../libft/libft.h"
 
-int	bi_env(t_env *env)
+int	msh_env(t_env *env)
 {
 	t_env	*cur;
 

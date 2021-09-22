@@ -44,7 +44,7 @@ void	arraylen_under_three(char **splited)
 	}
 }
 
-int	bi_exit(char **argv)
+int	msh_exit(char **argv)
 {
 	int		len;
 

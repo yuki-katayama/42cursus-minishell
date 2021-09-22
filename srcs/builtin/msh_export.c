@@ -72,7 +72,7 @@ static void	set_env(int set_mode, t_env *env, char *key, char *value)
 		get_key_env(key, env)->value = value;
 }
 
-int	bi_export(char **argv, t_env *env)
+int	msh_export(char **argv, t_env *env)
 {
 	char	*key;
 	char	*value;

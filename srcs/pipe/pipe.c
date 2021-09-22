@@ -55,8 +55,8 @@ void	multi_level_pipe(t_node *node, t_env *env)
 			child_process(pipe_fd, node, env, read_fd);
 			if (node->cmd)
 			{
-				if (msh_is_bi(*format_command(node->cmd, 0)))
-					msh_run_bi(format_command(node->cmd, 0), env, "child");
+				if (is_msh_bi(*format_command(node->cmd, 0)))
+					run_msh_bi(format_command(node->cmd, 0), env, "child");
 				else
 				{
 					execve(format_path(node->cmd->str, path), \

@@ -60,10 +60,10 @@ DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
 
 #-----------SET SRCS-------------#
-SRCNAME	?= msh_split_quates \
-			msh_substr \
-			msh_env \
-			msh_builtin
+SRCNAME	?= 	msh_substr \
+			msh_builtin \
+			msh_env_utils \
+			msh_exit_utils
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
