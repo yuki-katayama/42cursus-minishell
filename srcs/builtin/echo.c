@@ -6,20 +6,18 @@
 
 #include "../../libft/libft.h"
 
-int	bi_echo(char **splited, t_env *env)
+int	bi_echo(char **argv, t_env *env)
 {
 	(void)env;
-	splited++;
-	while (*splited)
+	while (*argv)
 	{
-		*splited = ft_chardel(*splited, "\"'");
-		ft_putstr_fd(*splited, STDOUT_FILENO);
-		free(*splited);
-		splited++;
-		if (splited != NULL)
+		ft_putstr_fd(*argv, STDOUT_FILENO);
+		free(*argv);
+		argv++;
+		if (argv != NULL)
 			ft_putchar_fd(' ', STDOUT_FILENO);
 	}
-	free(*splited);
+	free(*argv);
 	ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
 }

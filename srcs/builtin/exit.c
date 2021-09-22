@@ -44,20 +44,18 @@ void	arraylen_under_three(char **splited)
 	}
 }
 
-int	bi_exit(char *str)
+int	bi_exit(char **argv)
 {
-	char	**splited;
 	int		len;
 
-	splited = msh_split_quates(str, ' ');
-	if (splited == NULL)
+	if (argv == NULL)
 		exit(0);
-	len = ft_arraylen(splited);
+	len = ft_arraylen(argv);
 	if (len < 3)
-		arraylen_under_three(splited);
-	else if (!(ft_isdigitstr(skip_or_delete(*splited))))
+		arraylen_under_three(argv);
+	else if (!(ft_isdigitstr(skip_or_delete(*argv))))
 	{
-		exit_numeric_argument_error(*splited);
+		exit_numeric_argument_error(*argv);
 		exit(255);
 	}
 	exit_too_many_argument_error();

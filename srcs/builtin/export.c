@@ -55,7 +55,7 @@ static int	is_replace_or_add(char *key, t_env *env)
 	return (1);
 }
 
-void	set_env(int set_mode, t_env *env, char *key, char *value)
+static void	set_env(int set_mode, t_env *env, char *key, char *value)
 {
 	t_env	*add;
 
@@ -80,17 +80,15 @@ int	bi_export(char **argv, t_env *env)
 
 	if (!ft_strchr(*argv, '='))
 		return (1);
-	while (++argv && *argv)
+	while (argv && *argv)
 	{
-		*argv = ft_chardel(*argv, "\"'");
 		key = msh_substr(*argv, ft_strchr(*argv, '='));
 		value = msh_substr(ft_strchr(*argv, '=') + 1, \
 							(*argv + ft_strlen(*argv)));
 		set_mode = is_replace_or_add(key, env);
 		if (set_mode)
-		{
 			set_env(set_mode, env, key, value);
-		}
+		argv++;
 	}
 	return (0);
 }

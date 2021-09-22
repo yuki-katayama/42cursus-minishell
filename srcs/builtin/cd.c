@@ -1,10 +1,10 @@
 #include "../../libft/libft.h"
 #include "../../includes/builtin.h"
 
-int	bi_cd(char *str)
+int	bi_cd(char *path)
 {
-	str = ft_spaceskip(str);
-	if (*str == '\0')
+	path = ft_spaceskip(path);
+	if (*path == '\0')
 	{
 		if (chdir(getenv("HOME")) != 0)
 			perror("cd HOME: ");
@@ -12,7 +12,7 @@ int	bi_cd(char *str)
 	else
 	{
 		bi_pwd();
-		if (chdir(str) != 0)
+		if (chdir(path) != 0)
 			perror("cd: ");
 		bi_pwd();
 	}
