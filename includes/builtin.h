@@ -13,7 +13,7 @@
 void				bi_ctrl_d(char *str);
 
 //exit
-int					bi_exit(char *str);
+int					bi_exit(char **argv);
 
 // exit_utils
 bool				check_hypen(char **splited);

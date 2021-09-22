@@ -6,6 +6,8 @@ typedef struct s_node	t_node;
 typedef enum e_kind		t_kind;
 typedef enum e_status	t_status;
 
+#include <unistd.h> //size_t
+
 enum e_status
 {
 	ST_SP,

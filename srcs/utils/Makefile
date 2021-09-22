@@ -62,7 +62,8 @@ STCSDIR	?= ../../stcs
 #-----------SET SRCS-------------#
 SRCNAME	?= msh_split_quates \
 			msh_substr \
-			msh_env
+			msh_env \
+			msh_builtin
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
