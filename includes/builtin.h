@@ -12,7 +12,7 @@
 int					msh_exit(char **argv);
 
 // cd
-int					msh_cd(char *str);
+int					msh_cd(char *path, t_env *env);
 
 // pwd
 int					msh_pwd(void);

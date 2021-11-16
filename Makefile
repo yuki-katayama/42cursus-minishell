@@ -119,7 +119,7 @@ all	: $(STCS_LIBFT) $(STCS_SIGNAL) $(STCS_ERROR) $(STCS_BUILTIN) \
 		$(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -o $@ -c $<
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
 -include $(DPS)
 
@@ -169,6 +169,7 @@ dir :
 san	:	${OBJS} ## Run sanitize using addres
 			@$(MAKE) -s -C $(LIBDIR)
 			@$(CC) $(OBJS) $(SANFLAGS) $(CFLAGS) $(LDFLAGS) $(LIBDIR)/libft.a $(STCS) -o $(NAME)
+			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled(Sanitized)$(ESC_DEFAULT). 👍\n"
 
 .PHONY: clean
 clean	: ## Remove object

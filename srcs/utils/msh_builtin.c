@@ -25,7 +25,7 @@ int run_msh_bi(char **cmd_arg, t_env *env, char *process)
 	if (ft_strncmp(cmd, "exit", ft_strlen("exit") + 1) == 0)
 		msh_exit(argv);
 	else if (ft_strncmp(cmd, "cd", ft_strlen("cd") + 1) == 0)
-		msh_cd(*argv);
+		msh_cd(*argv, env);
 	else if (ft_strncmp(cmd, "exit", ft_strlen("exit") + 1) == 0)
 		msh_pwd();
 	else if (ft_strncmp(cmd, "export", ft_strlen("export") + 1) == 0)

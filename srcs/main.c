@@ -59,12 +59,15 @@ int main(void)
 		if (*argv != '\0')
 		{
 			node = nodalize(argv);
-			if (node->next != NULL)
+			if (node->next != NULL || !(is_msh_bi(*format_command(node->cmd, 0))))
 				multi_level_pipe(node, env);
 			else if (node && is_msh_bi(*format_command(node->cmd, 0)))
 			{
 				//ない環境変数が来たらアウト。
 				expand_env(&node->cmd, env);
+				expand_env(&node->input, env);
+				expand_env(&node->output, env);
+				marge_token(node);
 				run_msh_bi(format_command(node->cmd, 0), env, "adult");
 			}
 		}

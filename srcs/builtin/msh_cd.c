@@ -1,20 +1,25 @@
 #include "../../libft/libft.h"
 #include "../../includes/builtin.h"
 
-int	msh_cd(char *path)
+/* CDPATHを参照しなければならない。
+	///の対応
+*/
+
+void msh_cd_error(char *path)
 {
-	path = ft_spaceskip(path);
-	if (*path == '\0')
-	{
-		if (chdir(getenv("HOME")) != 0)
-			perror("cd HOME: ");
-	}
+	path = ft_strjoin("minishell: cd: ", path);
+	perror(path);
+}
+
+int	msh_cd(char *path, t_env *env)
+{
+	char *homeDir;
+
+	if (!path)
+		path = msh_get_env("HOME", env);
 	else
-	{
-		msh_pwd();
-		if (chdir(path) != 0)
-			perror("cd: ");
-		msh_pwd();
-	}
+		path = ft_spaceskip(path);
+	if (chdir(path) != 0)
+		msh_cd_error(path);
 	return (0);
 }
