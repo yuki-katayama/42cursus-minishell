@@ -1,77 +1,69 @@
-#include "../includes/main.h"
-#include "../includes/signal.h"
-#include "../includes/utils.h"
-#include "../includes/builtin.h"
-#include "../includes/lexer.h"
-#include "../includes/pipe.h"
-#include "../includes/utils.h"
-#include "../includes/expansion.h"
-#include "../libft/libft.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/03 20:30:13 by nyokota           #+#    #+#             */
+/*   Updated: 2022/01/09 17:49:56 by nyokota          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static void	bi_ctrl_d(char *str)
+#include "env.h"
+#include "exec.h"
+#include "lexer.h"
+#include "libft.h"
+#include "parser.h"
+#include "ft_signal.h"
+#include "utils.h"
+#include "expansion.h"
+#include "exit_status.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+
+static void	minishell_logic(char *line, t_env **env)
 {
-	ft_putstr_fd("\033[0A\n", STDERR_FILENO);
-	ft_putendl_fd(str, STDERR_FILENO);
-	exit(0);
-}
+	t_executor	*executor;
 
-static t_env *init_env(char **envp)
-{
-	t_env *head;
-	t_env **cur;
-	char *str;
-
-	head = NULL;
-	cur = &head;
-	while (*envp)
+	executor = parser(lexer(expansion(*env, line)));
+	if (executor)
 	{
-		if (!(ft_malloc_p((void **)&*cur, sizeof(t_env))))
-			return (NULL);
-		str = *envp;
-		while (*str && *str != '=')
-			++str;
-		*str = '\0';
-		**cur = (t_env){
-			.key = ft_strdup(*envp++),
-			.value = ft_strdup(++str)};
-		cur = &(*cur)->next;
+		ft_signal_process();
+		exec_command(executor, env);
 	}
-	return (head);
+	executor_clear(executor);
 }
 
-int main(void)
+static void	minishell_loop(t_env **env)
 {
-	extern char **environ;
-	char *argv;
-	t_node *node;
-	t_env *env;
+	char		*line;
 
-	env = init_env(environ);
-	while (1)
+	while (42)
 	{
 		ft_signal();
-		argv = readline("minishell$ ");
-		if (argv && ft_strlen(argv) > 0)
-			add_history(argv);
-		if (argv == NULL)
-			bi_ctrl_d("minishell$ exit");
-		argv = ft_spaceskip(argv);
-		if (*argv != '\0')
+		line = readline("minishell$ ");
+		if (!line)
 		{
-			node = nodalize(argv);
-			if (node->next != NULL || !(is_msh_bi(*format_command(node->cmd, 0))))
-				multi_level_pipe(node, env);
-			else if (node && is_msh_bi(*format_command(node->cmd, 0)))
-			{
-				//ない環境変数が来たらアウト。
-				expand_env(&node->cmd, env);
-				expand_env(&node->input, env);
-				expand_env(&node->output, env);
-				marge_token(node);
-				run_msh_bi(format_command(node->cmd, 0), env, "adult");
-			}
+			printf("exit\n");
+			exit(ft_atoi(get_exit_status()));
 		}
-		free(argv);
+		if (ft_strlen(line) > 0)
+			add_history(line);
+		if (is_brackets_closed(line))
+			minishell_logic(line, env);
+		free(line);
 	}
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_env	*env;
+
+	(void)argv;
+	(void)argc;
+	env = init_env(envp);
+	set_exit_status(0);
+	minishell_loop(&env);
 	return (0);
 }

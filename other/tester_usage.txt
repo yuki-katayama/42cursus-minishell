@@ -1,7 +1,0 @@
-テスターの使用方法
-
-1. includes/main.hの TESTを1にしてください。
-2. 42_minishell_testerの中で、grademe.sh -c exit でexitのテスターが走ります。
-3. 他のコマンドでも、grademe.sh -c <testしたいbuildinコマンド> でいけます。
-
-* 他の疑問に思ったテストケースに関しては、tester/cases に追加していってください。

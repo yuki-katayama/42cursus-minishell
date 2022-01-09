@@ -55,29 +55,34 @@ endif
 
 #-----------SET DIRECTORY--------#
 SRCDIR	?= ./srcs
-LIBDIR	?= ./libft
 OBJDIR	?= ./objs
 DPSDIR	?= ./dps
 STCSDIR ?= ./stcs
-
+INCDIR ?= ./include
 
 #-------------SET STCS VARIABLES----------#
-STCS_LIBFT	?= libft
-STCS_SIGNAL	?= signal
-STCS_UTILS ?= utils
-STCS_BUILTIN ?= builtin
-STCS_ERROR ?= error
+STCS_ENV ?= env
 STCS_LEXER ?= lexer
-STCS_PIPE ?= pipe
+STCS_SIGNAL ?= signal
+STCS_BUILTIN ?= builtin
+STCS_EXEC ?= exec
 STCS_EXPANSION ?= expansion
+STCS_LIBFT ?= libft
+STCS_PARSER ?= parser
+STCS_UTILS ?= utils
+STCS_EXIT_STATUS ?= exit_status
 
-STCSNAME ?= $(STCS_SIGNAL) \
-			$(STCS_UTILS) \
-			$(STCS_BUILTIN) \
-			$(STCS_ERROR) \
+STCSNAME ?= $(STCS_ENV) \
 			$(STCS_LEXER) \
-			$(STCS_PIPE) \
-			$(STCS_EXPANSION)
+			$(STCS_SIGNAL) \
+			$(STCS_BUILTIN) \
+			$(STCS_EXEC) \
+			$(STCS_EXPANSION) \
+			$(STCS_LIBFT) \
+			$(STCS_PARSER) \
+			$(STCS_UTILS) \
+			$(STCS_EXIT_STATUS)
+
 
 STCS ?= $(addprefix $(STCSDIR)/, $(addsuffix .a, $(STCSNAME)))
 
@@ -88,7 +93,7 @@ SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I $(shell brew --prefix readline)/include -Wall -Wextra -Werror -g
+CFLAGS	?= -I $(shell brew --prefix readline)/include -I $(INCDIR) -Wall -Wextra -Werror -g
 ifdef DEBUG
 	CFLAGS	:= -I $(shell brew --prefix readline)/include -g
 endif
@@ -111,21 +116,33 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 
 #------------------------------------------#
 
-
-
 .PHONY: all
-all	: $(STCS_LIBFT) $(STCS_SIGNAL) $(STCS_ERROR) $(STCS_BUILTIN) \
-		$(STCS_UTILS) $(STCS_PIPE) $(STCS_LEXER)  $(STCS_EXPANSION) \
+all	:	$(STCS_ENV) \
+		$(STCS_LEXER) \
+		$(STCS_SIGNAL) \
+		$(STCS_BUILTIN) \
+		$(STCS_EXEC) \
+		$(STCS_EXPANSION) \
+		$(STCS_LIBFT) \
+		$(STCS_PARSER) \
+		$(STCS_UTILS) \
+		$(STCS_EXIT_STATUS) \
 		$(NAME) ## Run minishell
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -o $@ -c $<
+	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
 	@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_YELLOW)$< ⌛"
 -include $(DPS)
 
-.PHONY: $(STCS_LIBFT)
-$(STCS_LIBFT): |  dir
-	@$(MAKE) -C $(LIBDIR)/.
+
+
+.PHONY: $(STCS_ENV)
+$(STCS_ENV):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_ENV)/.
+
+.PHONY: $(STCS_LEXER)
+$(STCS_LEXER):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_LEXER)/.
 
 .PHONY: $(STCS_SIGNAL)
 $(STCS_SIGNAL):
@@ -135,28 +152,32 @@ $(STCS_SIGNAL):
 $(STCS_BUILTIN):
 	@$(MAKE) -C $(SRCDIR)/$(STCS_BUILTIN)/.
 
-.PHONY: $(STCS_UTILS)
-$(STCS_UTILS):
-	@$(MAKE) -C $(SRCDIR)/$(STCS_UTILS)/.
-
-.PHONY: $(STCS_ERROR)
-$(STCS_ERROR):
-	@$(MAKE) -C $(SRCDIR)/$(STCS_ERROR)/.
-
-.PHONY: $(STCS_PIPE)
-$(STCS_PIPE):
-	@$(MAKE) -C $(SRCDIR)/$(STCS_PIPE)/.
-
-.PHONY: $(STCS_LEXER)
-$(STCS_LEXER):
-	@$(MAKE) -C $(SRCDIR)/$(STCS_LEXER)/.
+.PHONY: $(STCS_EXEC)
+$(STCS_EXEC):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_EXEC)/.
 
 .PHONY: $(STCS_EXPANSION)
 $(STCS_EXPANSION):
 	@$(MAKE) -C $(SRCDIR)/$(STCS_EXPANSION)/.
 
+.PHONY: $(STCS_LIBFT)
+$(STCS_LIBFT):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_LIBFT)/.
+
+.PHONY: $(STCS_PARSER)
+$(STCS_PARSER):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_PARSER)/.
+
+.PHONY: $(STCS_UTILS)
+$(STCS_UTILS):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_UTILS)/.
+
+PHONY: $(STCS_EXIT_STATUS)
+$(STCS_EXIT_STATUS):
+	@$(MAKE) -C $(SRCDIR)/$(STCS_EXIT_STATUS)/.
+
 $(NAME):	$(OBJS)
-			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) $(LIBDIR)/libft.a $(STCS) -o $(NAME)
+			@$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) $(STCS) -o $(NAME)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled$(ESC_DEFAULT). 👍\n"
 
 .PHONY: dir
@@ -169,19 +190,16 @@ dir :
 san	:	${OBJS} ## Run sanitize using addres
 			@$(MAKE) -s -C $(LIBDIR)
 			@$(CC) $(OBJS) $(SANFLAGS) $(CFLAGS) $(LDFLAGS) $(LIBDIR)/libft.a $(STCS) -o $(NAME)
-			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled(Sanitized)$(ESC_DEFAULT). 👍\n"
 
 .PHONY: clean
 clean	: ## Remove object
 			@echo "$(ESC_CLEAR_SCREEN)"
 			@$(RM) $(OBJDIR)
 			@$(RM) $(DPSDIR)
-			@$(MAKE) clean -s -C $(LIBDIR)
 			@echo "$(ESC_RED)${NAME}: '"$(OBJDIR)"' '"$(DPSDIR)"' has been deleted.$(ESC_DEFAULT)🗑️"
 
 .PHONY: fclean
 fclean	:	clean ## Remove object and static
-			@$(MAKE) fclean -s -C $(LIBDIR)
 			@$(RM) $(STCSDIR)
 			@$(RM) $(NAME)
 			@echo "$(ESC_RED)${NAME}: '"$(NAME)"' '"$(STCSDIR)"' has been deleted. $(ESC_DEFAULT)🗑️"
