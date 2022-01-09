@@ -58,14 +58,20 @@ SRCDIR	?= ./
 OBJDIR	?= ../../objs
 DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
+INCDIR	?= ../../include
 
 #-----------SET SRCS-------------#
-SRCNAME	?= expansion
+SRCNAME	?=	expand_env \
+			expansion \
+			expansion_sp \
+			expansion_sq \
+			expansion_dq \
+			is_env_ch
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I -Wall -Wextra -Werror -g
+CFLAGS	?= -I $(shell brew --prefix readline)/include -I $(INCDIR) -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
 NAME	?=	expansion.a
@@ -80,7 +86,7 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 #-------------------------------------#
 
 .PHONY: all
-all	:	$(STCSDIR)/$(NAME) ## make utils.a
+all	:	$(STCSDIR)/$(NAME) ## make expansion.a
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
@@ -89,8 +95,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 -include $(DPS)
 
 $(STCSDIR)/$(NAME):	$(OBJS)
-			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
+			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
+			
 			@rm -rf ../../minishell
 
 fclean:

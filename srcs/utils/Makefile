@@ -58,16 +58,30 @@ SRCDIR	?= ./
 OBJDIR	?= ../../objs
 DPSDIR	?= ../../dps
 STCSDIR	?= ../../stcs
+INCDIR	?= ../../include
 
 #-----------SET SRCS-------------#
-SRCNAME	?= msh_split_quates \
-			msh_substr \
-			msh_env
+SRCNAME	?=	is_number \
+			msh_atoi \
+			substr \
+			xdup2 \
+			xpipe \
+			is_number_string \
+			skip_space \
+			xclose \
+			xfork \
+			xwaitpid \
+			is_space \
+			skip_until_ch \
+			xdup \
+			xmalloc \
+			clear_string_array \
+			xperror
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
-CFLAGS	?= -I  -Wall -Wextra -Werror -g
+CFLAGS	?= -I $(shell brew --prefix readline)/include -I $(INCDIR) -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
 NAME	?=	utils.a
@@ -91,9 +105,15 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 -include $(DPS)
 
 $(STCSDIR)/$(NAME):	$(OBJS)
-			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
 			@printf "$(ESC_CLEAR_CURRENT_LINE)$(ESC_GREEN)$(NAME): All files compiled into\n\t'$(OBJDIR)/$(NAME).o'\n\t'$(DPSDIR)/$(NAME).d'\n\t'$(STCSDIR)/$(NAME).a' . $(ESC_DEFAULT)✅\n"
+			@ar	rcs	$(STCSDIR)/$(NAME)	$(OBJS)
 			@rm -rf ../../minishell
+
+.PHONY: dir
+dir :
+	@-mkdir -p $(OBJDIR)
+	@-mkdir -p $(DPSDIR)
+	@-mkdir -p $(STCSDIR)
 
 fclean:
 	rm -rf $(STCSDIR)/$(NAME)

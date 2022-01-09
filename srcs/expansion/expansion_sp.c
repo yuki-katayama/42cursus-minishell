@@ -1,39 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expansion.c                                        :+:      :+:    :+:   */
+/*   expansion_sp.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/03 17:32:34 by nyokota           #+#    #+#             */
-/*   Updated: 2021/12/23 18:36:45 by nyokota          ###   ########.fr       */
+/*   Created: 2021/12/03 17:32:22 by nyokota           #+#    #+#             */
+/*   Updated: 2022/01/09 17:13:46 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "expansion.h"
-#include "libft.h"
 #include "env.h"
 
-char	*expansion(t_env *env, char *line)
+char	*expansion_sp(t_env *env, char *str, size_t *idx)
 {
 	char	*ret;
-	char	*tmp_ret;
-	char	*add;
-	size_t	idx;
+	char	*start;
+	char	c;
 
-	ret = ft_strdup("");
-	idx = 0;
-	while (line[idx])
-	{
-		tmp_ret = ret;
-		if (line[idx] == '\'')
-			ret = ft_strjoin(ret, add = expansion_sq(line, &idx));
-		else if (line[idx] == '"')
-			ret = ft_strjoin(ret, add = expansion_dq(env, line, &idx));
-		else
-			ret = ft_strjoin(ret, add = expansion_sp(env, line, &idx));
-		free(tmp_ret);
-		free(add);
-	}
+	start = &str[*idx];
+	while (str[*idx] && str[*idx] != '\'' && str[*idx] != '"')
+		++*idx;
+	c = str[*idx];
+	str[*idx] = '\0';
+	ret = expand_env(env, start);
+	if (c)
+		str[*idx++] = c;
 	return (ret);
 }

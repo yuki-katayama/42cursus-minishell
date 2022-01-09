@@ -1,92 +1,69 @@
-#include "../includes/main.h"
-#include "../includes/signal.h"
-#include "../includes/utils.h"
-#include "../includes/builtin.h"
-#include "../includes/lexer.h"
-#include "../includes/pipe.h"
-#include "../includes/utils.h"
-#include "../includes/expansion.h"
-#include "../libft/libft.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/03 20:30:13 by nyokota           #+#    #+#             */
+/*   Updated: 2022/01/09 17:49:56 by nyokota          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static bool	is_builtin(char *argv, char *cmd, char *cmd_sp)
+#include "env.h"
+#include "exec.h"
+#include "lexer.h"
+#include "libft.h"
+#include "parser.h"
+#include "ft_signal.h"
+#include "utils.h"
+#include "expansion.h"
+#include "exit_status.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+
+static void	minishell_logic(char *line, t_env **env)
 {
-	if (!argv)
-		return (false);
-	if ((ft_strncmp(argv, cmd_sp, ft_strlen(cmd_sp)) == 0) \
-			|| ft_strncmp(argv, cmd, ft_strlen(cmd) + 1) == 0)
-		return (true);
-	return (false);
-}
+	t_executor	*executor;
 
-static int	run_builtin(char *argv, t_env *env)
-{
-	if (is_builtin(argv, "exit", "exit "))
-		bi_exit(argv + ft_strlen("exit"));
-	else if (is_builtin(argv, "cd", "cd "))
-		return (bi_cd(argv + ft_strlen("cd")));
-	else if (is_builtin(argv, "pwd", "pwd "))
-		return (bi_pwd());
-	else if (is_builtin(argv, "export", "export "))
-		return (bi_export(msh_split_quates(argv, ' '), env));
-	else if (is_builtin(argv, "unset", "unset "))
-		return (bi_unset(msh_split_quates(argv, ' '), env));
-	else if (is_builtin(argv, "env", "env "))
-		return (bi_env(env));
-	else if (is_builtin(argv, "echo", "echo "))
-		return (bi_echo(msh_split_quates(argv, ' '), env));
-	return (1);
-}
-
-static t_env	*init_env(char **envp)
-{
-	t_env	*head;
-	t_env	**cur;
-	char	*str;
-
-	head = NULL;
-	cur = &head;
-	while (*envp)
+	executor = parser(lexer(expansion(*env, line)));
+	if (executor)
 	{
-		if (!(ft_malloc_p((void **)&*cur, sizeof(t_env))))
-			return (NULL);
-		str = *envp;
-		while (*str && *str != '=')
-			++str;
-		*str = '\0';
-		**cur = (t_env)
-		{
-			.key = ft_strdup(*envp++),
-			.value = ft_strdup(++str)
-		};
-		cur = &(*cur)->next;
+		ft_signal_process();
+		exec_command(executor, env);
 	}
-	return (head);
+	executor_clear(executor);
 }
 
-int	main(void)
+static void	minishell_loop(t_env **env)
 {
-	extern char	**environ;
-	char		*argv;
-	t_node		*node;
-	t_env		*st_env;
-	char		**pipe_split;
+	char		*line;
 
-	st_env = init_env(environ);
-	while (1)
+	while (42)
 	{
 		ft_signal();
-		argv = readline("minishell$ ");
-		if (argv && ft_strlen(argv) > 0)
-			add_history(argv);
-		if (argv == NULL)
-			bi_ctrl_d("minishell$ exit");
-		argv = ft_spaceskip(argv);
-		node = nodalize(argv);
-		multi_level_pipe(node, st_env);
-		pipe_split = ft_split(argv, '|');
-		if (ft_arraylen(pipe_split) != 0)
-			run_builtin(pipe_split[ft_arraylen(pipe_split) - 1], st_env);
-		free(argv);
+		line = readline("minishell$ ");
+		if (!line)
+		{
+			printf("exit\n");
+			exit(ft_atoi(get_exit_status()));
+		}
+		if (ft_strlen(line) > 0)
+			add_history(line);
+		if (is_brackets_closed(line))
+			minishell_logic(line, env);
+		free(line);
 	}
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	t_env	*env;
+
+	(void)argv;
+	(void)argc;
+	env = init_env(envp);
+	set_exit_status(0);
+	minishell_loop(&env);
 	return (0);
 }

@@ -61,18 +61,9 @@ STCSDIR	?= ../../stcs
 INCDIR	?= ../../include
 
 #-----------SET SRCS-------------#
-SRCNAME	?=	is_brackets_closed \
-			token_clear \
-			op_dro_to_node \
-			op_pipe_to_node \
-			op_ro_to_node \
-			op_to_node \
-			get_op_func \
-			lexer \
-			op_dri_to_node \
-			op_other_to_node \
-			op_ri_to_node \
-			remove_brackets
+SRCNAME	?=	exit_status \
+			get_exit_status\
+			set_exit_status
 
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
@@ -80,7 +71,7 @@ SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 CFLAGS	?= -I $(shell brew --prefix readline)/include -I $(INCDIR) -Wall -Wextra -Werror -g
 
 #-------------SET VARIEBLE-----------#
-NAME	?=	lexer.a
+NAME	?=	exit_status.a
 
 CC		?= gcc
 
@@ -92,7 +83,7 @@ DPS		?= $(addprefix $(DPSDIR)/, $(notdir $(SRCS:.o=.d)))
 #-------------------------------------#
 
 .PHONY: all
-all	:	dir $(STCSDIR)/$(NAME) ## make lexer.a
+all	:	dir $(STCSDIR)/$(NAME) ## make exit_status.a
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -MMD -MP -MF $(DPSDIR)/$(notdir $(<:.c=.d)) -c $< -o $@
