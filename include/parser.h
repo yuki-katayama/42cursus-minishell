@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:35:32 by nyokota           #+#    #+#             */
-/*   Updated: 2021/12/02 18:35:47 by nyokota          ###   ########.fr       */
+/*   Updated: 2022/01/10 21:51:50 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_node
 	t_kind				kind;
 	char				*str;
 	int					fd;
+	int					here_doc_fd;
 	int					dup_fd;
 	t_node				*next;
 }t_node;

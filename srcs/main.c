@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 20:30:13 by nyokota           #+#    #+#             */
-/*   Updated: 2022/01/09 17:49:56 by nyokota          ###   ########.fr       */
+/*   Updated: 2022/01/10 21:02:01 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,7 @@ static void	minishell_logic(char *line, t_env **env)
 
 	executor = parser(lexer(expansion(*env, line)));
 	if (executor)
-	{
-		ft_signal_process();
 		exec_command(executor, env);
-	}
 	executor_clear(executor);
 }
 
@@ -41,7 +38,7 @@ static void	minishell_loop(t_env **env)
 
 	while (42)
 	{
-		ft_signal();
+		ft_parent_sig_hundler(ft_parent_signal_sigint);
 		line = readline("minishell$ ");
 		if (!line)
 		{

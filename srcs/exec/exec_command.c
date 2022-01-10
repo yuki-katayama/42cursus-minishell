@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 17:20:57 by nyokota           #+#    #+#             */
-/*   Updated: 2022/01/09 17:12:49 by nyokota          ###   ########.fr       */
+/*   Updated: 2022/01/10 21:26:43 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,13 @@
 #include "ft_signal.h"
 
 static void	child_process(t_executor *executor, t_env **env, \
-							int *pipe_fd, int read_fd)
+							int *pipe_fd)
 {
-	ft_signal();
 	xclose(pipe_fd[READ]);
 	if (executor->next)
 		xdup2(pipe_fd[WRITE], WRITE);
 	xclose(pipe_fd[WRITE]);
-	if (setup_redirects(executor->redirect, *env, read_fd))
+	if (setup_redirects(executor->redirect))
 		exit(EXIT_FAILURE);
 	if (is_builtin(executor->command))
 		exit(exec_builtin(executor, env));
@@ -46,7 +45,7 @@ static void	adult_process(int *pipe_fd)
 
 static void	adult_exec_builtin(t_executor *executor, t_env **env)
 {
-	if (setup_redirects(executor->redirect, *env, STDOUT_FILENO))
+	if (setup_redirects(executor->redirect))
 		set_exit_status(EXIT_FAILURE);
 	else
 	{
@@ -83,6 +82,9 @@ void	exec_command(t_executor *executor, t_env **env)
 	size_t	n;
 	pid_t	pids[800];
 
+	if (here_docs(executor, *env))
+		return ;
+	ft_child_sig_hundler();
 	if (is_builtin(executor->command) && \
 		!executor->next)
 	{
@@ -96,7 +98,7 @@ void	exec_command(t_executor *executor, t_env **env)
 		xpipe(pipe_fd);
 		pids[n] = xfork();
 		if (!pids[n++])
-			child_process(executor, env, pipe_fd, read_fd);
+			child_process(executor, env, pipe_fd);
 		else
 			adult_process(pipe_fd);
 		executor = executor->next;
