@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:39:26 by nyokota           #+#    #+#             */
-/*   Updated: 2021/12/23 14:40:27 by nyokota          ###   ########.fr       */
+/*   Updated: 2022/01/09 19:02:41 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,14 @@ int	msh_bi_exit(t_node *args, t_env **env)
 		args = args->next;
 	if (!args)
 		exit(ft_atoi(get_exit_status()));
-	if (args->next)
-		return (exit_too_many_argument_error(), 1);
 	exit_status = exit_atoi(args->str, &err_flg);
 	if (err_flg)
 	{
 		exit_numeric_argument_error(args->str);
 		exit(255);
 	}
+	else if (args->next)
+		return (exit_too_many_argument_error(), 1);
 	else
 		exit((uint8_t)exit_status);
 	return (0);

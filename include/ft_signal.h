@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:35:57 by nyokota           #+#    #+#             */
-/*   Updated: 2022/01/09 17:35:08 by nyokota          ###   ########.fr       */
+/*   Updated: 2022/01/10 21:06:33 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@
 # include <unistd.h>
 # include <readline/readline.h>
 
-void	ft_signal(void);
-void	ft_signal_process(void);
+void ft_heredoc_sig_hundler(void);
+void	ft_child_sig_hundler(void);
+void	ft_parent_sig_hundler(void (*func)(int sig));
+void	ft_parent_signal_sigint(int sig);
 
 #endif

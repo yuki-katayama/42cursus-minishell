@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 17:34:46 by nyokota           #+#    #+#             */
-/*   Updated: 2021/12/03 18:24:33 by nyokota          ###   ########.fr       */
+/*   Updated: 2022/01/09 18:33:38 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	remove_brackets(char *str)
 				++str;
 			ft_memmove(str, &str[1], ft_strlen(str));
 		}
-		if (*str)
+		else if (*str)
 			++str;
 	}
 }
