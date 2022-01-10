@@ -12,7 +12,6 @@ static void ft_child_signal_sigint(int sig)
 static void	ft_child_signal_sigquit(int sig)
 {
 	(void)sig;
-	ft_put_str_fd("\b\b  \b\b", 1);
 	ft_put_str_fd("Quit: 3\n", 1);
 }
 
