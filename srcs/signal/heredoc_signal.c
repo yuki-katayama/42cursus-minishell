@@ -14,7 +14,6 @@ static void	ft_heredoc_signal_sigquit(int sig)
 	(void)sig;
 	ft_put_str_fd("\b\b  \b\b", 1);
 	ft_put_str_fd("Quit: 3\n", 1);
-	exit(1);
 }
 
 void	ft_heredoc_sig_hundler(void)
