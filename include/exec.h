@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 18:30:50 by nyokota           #+#    #+#             */
-/*   Updated: 2022/01/10 20:16:38 by nyokota          ###   ########.fr       */
+/*   Updated: 2021/12/03 21:24:51 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ struct s_executor
 void	executor_clear(t_executor *head);
 char	**format_command(t_node *node);
 char	*format_path(char *cmd, char **path);
-bool	here_docs(t_executor *executor, t_env *env);
-bool	setup_redirects(t_node *node/*, t_env *env, int read_fd*/);
+int		here_doc(char *str, t_env *env, int read_fd);
+bool	setup_redirects(t_node *node, t_env *env, int read_fd);
 void	restore_fd(t_node *node);
 void	exec_command(t_executor *executor, t_env **env);
 

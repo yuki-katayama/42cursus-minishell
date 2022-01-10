@@ -6,7 +6,7 @@
 /*   By: nyokota <nyokota@student.42tokyo.jp>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/03 21:18:30 by nyokota           #+#    #+#             */
-/*   Updated: 2022/01/10 21:18:37 by nyokota          ###   ########.fr       */
+/*   Updated: 2021/12/23 16:43:06 by nyokota          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include "parser.h"
 #include "expansion.h"
 
-static int	get_fd(t_node *node)
+int	get_fd(t_node *node, t_env *env, int read_fd)
 {
 	int	fd;
 
@@ -29,31 +29,28 @@ static int	get_fd(t_node *node)
 	if (node->kind == TK_RI)
 		fd = open(node->str, O_RDONLY);
 	if (node->kind == TK_DRI)
-		fd = node->fd;
+		fd = here_doc(node->str, env, read_fd);
 	return (fd);
 }
 
 static int	change_fd(t_node *node, int fd)
 {
-	if (fd > 0)
+	if (fd >= 0)
 	{
 		node->dup_fd = xdup(node->fd);
-		if (node->kind != TK_DRI)
-		{
-			xdup2(fd, node->fd);
-			xclose(fd);
-		}
+		xdup2(fd, node->fd);
+		xclose(fd);
 	}
 	else
 		return (true);
 	return (false);
 }
 
-bool	setup_redirects(t_node *node)
+bool	setup_redirects(t_node *node, t_env *env, int read_fd)
 {
 	while (node)
 	{
-		if (change_fd(node, get_fd(node)))
+		if (change_fd(node, get_fd(node, env, read_fd)))
 		{
 			xperror(node->str);
 			return (true);

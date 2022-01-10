@@ -61,9 +61,7 @@ STCSDIR	?= ../../stcs
 INCDIR	?= ../../include
 
 #-----------SET SRCS-------------#
-SRCNAME	?=	child_signal \
-			heredoc_signal \
-			parent_signal
+SRCNAME	?=	signal
 SRCS ?= $(addprefix $(SRCDIR)/, $(addsuffix .c, $(SRCNAME)))
 
 #-------------SET FLAGS--------------#
