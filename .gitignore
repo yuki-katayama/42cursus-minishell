@@ -8,3 +8,4 @@ libft/libft.a
 .vscode
 includes/*.gch
 test.c
+en.subject.pdf
